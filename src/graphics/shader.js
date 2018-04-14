@@ -77,4 +77,12 @@ function Shader(shaderName, shaderCallback) {
     this.setVec3 = function(name, vector) {
         gl.uniform3f(gl.getUniformLocation(this.programId, name), vector.x, vector.y, vector.z);
     }
+
+    this.setInt = function(name, value) {
+        gl.uniform1i(gl.getUniformLocation(this.programId, name), value);
+    }
+
+    this.setFloat = function(name, values, count) {
+        gl.uniform1fv(gl.getUniformLocation(this.programId, name), count, values);
+    }
 }

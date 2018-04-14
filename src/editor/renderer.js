@@ -18,10 +18,12 @@ function Renderer(canvas) {
     }
 	else console.log("WebGL2 context loaded");
 
-	// Size more than 256 exceeds the max index value: 2^16
-    this.terrain = new Terrain(100, 2);
+	this.axes = new OriginAxes();
 
-    gl.clearColor(0.176, 0.176, 0.16, 1.0);
+	// Size more than 256 exceeds the max index value: 2^16
+    this.terrain = new Terrain(128, 1);
+
+    gl.clearColor(0.109, 0.129, 0.188, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
 
@@ -36,5 +38,6 @@ function Renderer(canvas) {
 Renderer.prototype.render = function(camera) {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+	this.axes.render(camera);
 	this.terrain.render(camera);
 }

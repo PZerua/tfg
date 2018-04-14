@@ -14,10 +14,9 @@ var Editor = {
 
 		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 1000.0);
 	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
-		this.camera.setYawPitch(-90, -30);
 
 		this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-		//document.body.appendChild( this.stats.dom );
+		document.body.appendChild( this.stats.dom );
 
 		this.graphCanvas = new LGraphCanvas("#graphCanvas", this.graph);
 		this.graphCanvas.resize();

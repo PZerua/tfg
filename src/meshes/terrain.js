@@ -2,16 +2,21 @@ function Terrain(size, scale) {
 
     this.shader;
     this.vertices = [];
+    this.uvs = [];
     this.barycentricBuffer = [];
     this.indices = [];
     this.normals = [];
+    this.heightmap = [];
+    this.heightmapTexture = undefined;
     this.size = size;
     this.scale = scale;
 
     this.vao;
     this.vbo;
+    this.vboUvs;
     this.vboBarycentric;
     this.vboNormals;
+    this.vboHeightmap;
     this.ebo;
 
     this.isReady = false;
@@ -25,48 +30,48 @@ function Terrain(size, scale) {
         var maxX = -Infinity;
         var maxY = -Infinity;
         var maxZ = -Infinity;
-        // -- Create the grid --
-        // Store vertices
+
+        // Precalculate heightmap (this will be moved to litegraph.js)
         for (var height = 0; height < self.size; height++) {
             for (var width = 0; width < self.size; width++) {
-
                 var xCord = width / self.size;
                 var yCord = height / self.size; // normalize
+
                 var size = 2;  // pick a scaling value
-                var n = TFG.PerlinNoise.noise(size * xCord, size * yCord, 2 );
 
-                if (minX > width * self.scale)
-                    minX = width * self.scale;
-
-                if (maxX < width * self.scale)
-                    maxX = width * self.scale;
-
-                if (minY > n * 80)
-                    minY = n * 80;
-
-                if (maxY < n * 80)
-                    maxY = n * 80;
-
-                if (minZ > height * self.scale)
-                    minZ = height * self.scale;
-
-                if (maxZ < height * self.scale)
-                    maxZ = height * self.scale;
-
-                // Add vertex
-                self.vertices.push(width * self.scale);    // x
-                self.vertices.push(n * 80);                // y
-                self.vertices.push(height * self.scale);   // z
+                this.heightmap[width + height * self.size] = (PerlinNoise.noise(size * xCord, size * yCord, 2 ));
             }
         }
 
-        self.center = new vec3((minX + maxX) / 2.0, (minY + maxY) / 2.0, (minZ + maxZ) / 2.0);
+        this.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
 
-        self.radious = Math.sqrt((maxX - self.center.x)*(maxX - self.center.x) +
-                                (maxY - self.center.y)*(maxY - self.center.y) +
-                                (maxZ - self.center.z)*(maxZ - self.center.z));
+        // -- Create the grid --
+        // Store vertices
+        for (var height = -self.size/2; height < self.size/2; height++) {
+            for (var width = -self.size/2; width < self.size/2; width++) {
+                // Add vertex
+                self.vertices.push(width * self.scale);    // x
+                self.vertices.push(0);                     // y
+                self.vertices.push(height * self.scale);   // z
 
-        Editor.camera.eye = new vec3(self.radious * 0.5,  self.radious * 1.5, self.radious * 2.0);
+                self.uvs.push((width + self.size / 2) / self.size);
+                self.uvs.push((height + self.size / 2) / self.size);
+            }
+        }
+
+        // Face camera to mesh
+        // TODO: Review this
+        self.center = new vec3(self.size / 2.0, 0, self.size / 2.0);
+        self.radious = Math.sqrt((self.center.x) * (self.center.x) + (self.center.z) * (self.center.z));
+
+        Editor.camera.eye = new vec3(0, self.radious * 2.0, self.radious * 1.5);
+
+        var dir = vec3.vec3Sub(new vec3(0,0,0), Editor.camera.eye).normalize();
+
+        var pitch = Math.asin(dir.y);
+        var yaw = Math.acos(dir.x/Math.cos(pitch));
+
+        Editor.camera.setYawPitch(-Math.toDegrees(yaw), Math.toDegrees(pitch));
 
         var currentBaryPoint = new vec3(1, 0, 0);
         var lastBaryPoint = new vec3(0, 0, 0);
@@ -80,6 +85,7 @@ function Terrain(size, scale) {
             else if (baryPoint.z)
                 baryPoint.set(1, 0, 0);
         }
+
         // Store barycentric points used for wireframe
         for (var i = 0; i < self.size; i++) {
             for (var j = 0; j < self.size; j++) {
@@ -99,8 +105,8 @@ function Terrain(size, scale) {
             }
         }
 
+        // They should have the same length
         var delta = self.barycentricBuffer.length - self.vertices.length;
-
         while (delta-- > 0) { self.barycentricBuffer.pop(); }
 
         // Calculate normals
@@ -121,12 +127,12 @@ function Terrain(size, scale) {
                 if (y == self.size - 1)
                     yPos = self.size - 2;
 
-                var vertexNumber = (xPos + yPos * self.size) * 3;
+                var vertexNumber = (xPos + yPos * self.size);
 
-                hL = self.vertices[vertexNumber - 2]; // Read left vertex height
-                hR = self.vertices[vertexNumber + 6 - 2]; // Read right vertex height
-                hU = self.vertices[vertexNumber - 3 * self.size + 3 - 2]; // Read above vertex height
-                hD = self.vertices[vertexNumber + 3 * self.size + 3 - 2]; // Read below vertex height
+                hL = self.heightmap[vertexNumber - 1] * 80;
+                hR = self.heightmap[vertexNumber + 1] * 80;
+                hU = self.heightmap[vertexNumber - self.size + 1] * 80;
+                hD = self.heightmap[vertexNumber + self.size + 1] * 80;
 
                 // deduce terrain normal
                 var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();
@@ -169,19 +175,26 @@ function Terrain(size, scale) {
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
 
+        // VertexBuffer to store uvs
+        self.vboUvs = new VertexBuffer(new Float32Array(self.uvs), gl.STATIC_DRAW);
+
+        // The attribute position in the shader
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+
         // VertexBuffer to store barycentric positions (for wireframe rendering)
         self.vboBarycentric = new VertexBuffer(new Float32Array(self.barycentricBuffer), gl.STATIC_DRAW);
 
         // The attribute position in the shader
-        gl.enableVertexAttribArray(1);
-        gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(2);
+        gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
 
         // VertexBuffer to store normals
         self.vboNormals = new VertexBuffer(new Float32Array(self.normals), gl.STATIC_DRAW);
 
         // The attribute position in the shader
-        gl.enableVertexAttribArray(2);
-        gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(3);
+        gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
 
         // IndexBuffer to store vertex indices
         self.ebo = new IndexBuffer(new Uint16Array(self.indices), gl.STATIC_DRAW);
@@ -200,6 +213,7 @@ function Terrain(size, scale) {
             this.shader.setVec3("u_eye", camera.eye);
             this.shader.setMatrix4("u_mvp", camera.vp);
             this.shader.setMatrix4("u_view", camera.view);
+            this.shader.setInt("u_heightmap", 0);
             gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_SHORT, 0);
             this.vao.unbind();
         }

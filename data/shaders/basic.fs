@@ -7,8 +7,11 @@ in vec3 oBarycentric;
 out vec4 color;
 in vec3 normal;
 in vec3 oVertex;
+in vec2 oUvs;
 
 uniform vec3 u_eye;
+
+uniform sampler2D u_heightmap;
 
 vec3 faceNormal(vec3 pos)
 {
@@ -20,7 +23,7 @@ vec3 faceNormal(vec3 pos)
 float edgeFactor()
 {
     vec3 d = fwidth(oBarycentric);
-    vec3 a3 = smoothstep(vec3(0.0), d*1.2, oBarycentric);
+    vec3 a3 = smoothstep(vec3(0.0), d*1.1, oBarycentric);
     return min(min(a3.x, a3.y), a3.z);
 }
 
@@ -34,9 +37,10 @@ void main (void)
     vec3 R = normalize(reflect(-L, N));
     vec3 V = normalize(u_eye - oVertex);
 
-    diffuse.rgb = clamp( vec3(0.135, 0.535, 0.535) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
-    diffuse.a = 1.0;
+    diffuse.rgb = clamp( vec3(0.701, 0.878, 0.6) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
+    diffuse.a = 0.9;
 
+    //color = texture(u_heightmap, oUvs);
     color = diffuse;
     //color = vec4(oBarycentric, 1.0);
     //color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
