@@ -7,17 +7,15 @@
 </head>
 
 <body onload="Editor.init()">
-    <div id="displayArea">
+    <div id="container">
         <canvas id="glCanvas"></canvas>
-        <div id="graphDiv">
-            <canvas id="graphCanvas"></canvas>
-        </div>
+        <canvas id="graphCanvas"></canvas>
     </div>
 </body>
 
 <script src="src/external/litegraph.js"></script>
-<script src="src/module/tfg.js"></script>
-<script src="src/module/generatorNode.js"></script>
+<script src="src/litegraph/PerlinNoise.js"></script>
+<script src="src/litegraph/nodePerlin.js"></script>
 <script src="src/external/stats.min.js"></script>
 <script src="src/graphics/buffers/vertexArray.js"></script>
 <script src="src/graphics/buffers/vertexBuffer.js"></script>
@@ -29,7 +27,7 @@
 <script src="src/math/vec4.js"></script>
 <script src="src/math/mat4.js"></script>
 <script src="src/graphics/shader.js"></script>
-<script src="src/graphics/texture.js"></script>ç
+<script src="src/graphics/texture.js"></script>
 <script src="src/meshes/terrain.js"></script>
 <script src="src/meshes/originAxes.js"></script>
 <script src="src/editor/camera.js"></script>

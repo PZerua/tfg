@@ -31,19 +31,9 @@ function Terrain(size, scale) {
         var maxY = -Infinity;
         var maxZ = -Infinity;
 
-        // Precalculate heightmap (this will be moved to litegraph.js)
-        for (var height = 0; height < self.size; height++) {
-            for (var width = 0; width < self.size; width++) {
-                var xCord = width / self.size;
-                var yCord = height / self.size; // normalize
+        self.heightmap = Editor.outputNode.getOutputData(0);
 
-                var size = 2;  // pick a scaling value
-
-                this.heightmap[width + height * self.size] = (PerlinNoise.noise(size * xCord, size * yCord, 2 ));
-            }
-        }
-
-        this.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
+        self.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
 
         // -- Create the grid --
         // Store vertices

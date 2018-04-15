@@ -1,7 +1,7 @@
 var Editor = {
 	glCanvas : document.getElementById("glCanvas"),
     camera : new Camera(),
-	renderer : new Renderer(this.glCanvas),
+	renderer : undefined,
 	prevMousePos: new vec2(0, 0),
 	mousePos : new vec2(0, 0),
 	mouseDelta: new vec2(0, 0),
@@ -12,9 +12,6 @@ var Editor = {
 	outputNode : undefined,
 	init : function() {
 
-		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 1000.0);
-	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
-
 		this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 		document.body.appendChild( this.stats.dom );
 
@@ -23,17 +20,20 @@ var Editor = {
 
 		window.addEventListener("resize", function() { Editor.graphCanvas.resize(); } );
 
+		// Setup litegraph defualt nodes
 		var node_const = LiteGraph.createNode("basic/const");
+		node_const.title = "Width";
 		node_const.pos = [200,200];
 		this.graph.add(node_const);
-		node_const.setValue(4.5);
+		node_const.setValue(128);
 
 		var node_const2 = LiteGraph.createNode("basic/const");
+		node_const2.title = "Height";
 		node_const2.pos = [200,300];
 		this.graph.add(node_const2);
-		node_const2.setValue(4.5);
+		node_const2.setValue(128);
 
-		this.outputNode = LiteGraph.createNode("basic/sum");
+		this.outputNode = LiteGraph.createNode("heightmap/perlin");
 		this.outputNode.pos = [700,200];
 		this.graph.add(this.outputNode);
 
@@ -41,6 +41,11 @@ var Editor = {
 		node_const2.connect(0, this.outputNode, 1 );
 
 		this.graph.start()
+
+		// Setup renderer and camera
+		this.renderer = new Renderer(this.glCanvas);
+		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 1000.0);
+	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
 
 		mainLoop();
 	},
@@ -76,6 +81,16 @@ function mainLoop() {
 
 	requestAnimationFrame(mainLoop);
 }
+
+window.addEventListener("resize", function(event) {
+
+	Editor.glCanvas.width = window.innerWidth
+	Editor.glCanvas.height = window.innerHeight
+
+	Editor.camera.setPerspective(45.0, Editor.glCanvas.width / Editor.glCanvas.height, 0.1, 1000.0);
+	Editor.camera.setViewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
+
+});
 
 Editor.glCanvas.addEventListener("mousemove", function(event) {
 
