@@ -40,8 +40,6 @@ void main (void)
     diffuse.rgb = clamp( vec3(0.701, 0.878, 0.6) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
     diffuse.a = 0.9;
 
-    //color = texture(u_heightmap, oUvs);
     color = diffuse;
-    //color = vec4(oBarycentric, 1.0);
     //color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
 }
