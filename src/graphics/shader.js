@@ -3,6 +3,22 @@ function Shader(shaderName, shaderCallback) {
     this.programId;
     this.isLoaded = false;
 
+    var numCompleted = 0;
+    var result = [];
+
+    // Callback that calls compileShaders when both files are loaded
+    function loadedCallback(text, index) {
+        result[index] = text;
+        numCompleted++;
+
+        // When both sources are loaded, compile them
+        if (numCompleted == 2)
+            compileShaders(result);
+    }
+
+    loadFile("data/shaders/" + shaderName + ".vs", loadedCallback, 0);
+    loadFile("data/shaders/" + shaderName + ".fs", loadedCallback, 1);
+
     var self = this;
 
     function compileShaders(shaderTexts)
@@ -10,19 +26,21 @@ function Shader(shaderName, shaderCallback) {
         var vertex = gl.createShader(gl.VERTEX_SHADER);
         var fragment = gl.createShader(gl.FRAGMENT_SHADER);
 
+        // Compile vertex source
         gl.shaderSource(vertex, shaderTexts[0]);
         gl.compileShader(vertex);
 
+        // Compile fragment source
         gl.shaderSource(fragment, shaderTexts[1]);
         gl.compileShader(fragment);
 
-        // Print compile errors if any
+        // Print compile errors for vertex compilation
         if (!gl.getShaderParameter(vertex, gl.COMPILE_STATUS))
         {
             var log = gl.getShaderInfoLog(vertex);
             console.error("Error in vertex shader compilation\n" + log);
         }
-
+        // Print compile errors for fragment compilation
         if (!gl.getShaderParameter(fragment, gl.COMPILE_STATUS))
         {
             var log = gl.getShaderInfoLog(fragment);
@@ -50,25 +68,6 @@ function Shader(shaderName, shaderCallback) {
 
         shaderCallback();
     }
-
-    function loadShaders(callback) {
-
-        var numCompleted = 0;
-        var result = [];
-
-        function loadedCallback(text, index) {
-            result[index] = text;
-            numCompleted++;
-
-            if (numCompleted == 2)
-                callback(result);
-        }
-
-        loadFile("data/shaders/" + shaderName + ".vs", loadedCallback, 0);
-        loadFile("data/shaders/" + shaderName + ".fs", loadedCallback, 1);
-    }
-
-    loadShaders(compileShaders);
 
     this.setMatrix4 = function(name, matrix) {
         gl.uniformMatrix4fv(gl.getUniformLocation(this.programId, name), false, matrix.m);

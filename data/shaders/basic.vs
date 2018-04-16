@@ -18,7 +18,6 @@ uniform sampler2D u_heightmap;
 
 void main(void)
 {
-
 	float height = texture(u_heightmap, aUvs).r;
 	normal = aNormal;
 	oVertex = aVertex;

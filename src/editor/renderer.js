@@ -26,7 +26,6 @@ function Renderer(canvas) {
     gl.clearColor(0.109, 0.129, 0.188, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
-	gl.lineWidth(20);
 
 	gl.enable(gl.CULL_FACE);
 	gl.cullFace(gl.BACK);

@@ -31,9 +31,12 @@ function Terrain(size, scale) {
         var maxY = -Infinity;
         var maxZ = -Infinity;
 
+        // Get heightmap from output node TODO: This is probably not the best way to do it
         self.heightmap = Editor.outputNode.getOutputData(0);
 
-        self.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
+        // TODO: Replace 128 hacked value
+
+        self.heightmapTexture = new Texture(128, 128, this.heightmap);
 
         // -- Create the grid --
         // Store vertices
@@ -63,6 +66,7 @@ function Terrain(size, scale) {
 
         Editor.camera.setYawPitch(-Math.toDegrees(yaw), Math.toDegrees(pitch));
 
+        // -- Barypoints --
         var currentBaryPoint = new vec3(1, 0, 0);
         var lastBaryPoint = new vec3(0, 0, 0);
 
@@ -99,7 +103,7 @@ function Terrain(size, scale) {
         var delta = self.barycentricBuffer.length - self.vertices.length;
         while (delta-- > 0) { self.barycentricBuffer.pop(); }
 
-        // Calculate normals
+        // -- Normals --
         for (var y = 0; y < self.size; y++) {
             for (var x = 0; x < self.size; x++) {
 
@@ -117,12 +121,16 @@ function Terrain(size, scale) {
                 if (y == self.size - 1)
                     yPos = self.size - 2;
 
-                var vertexNumber = (xPos + yPos * self.size);
+                // Obtain correct index from heightmap when sizes mismatch (TODO: causes artifacts)
+                var xIdx = Math.round(xPos * 128 / self.size)
+                var yIdx = Math.round(yPos * 128 / self.size)
+
+                var vertexNumber = (xIdx + yIdx * 128);
 
                 hL = self.heightmap[vertexNumber - 1] * 80;
                 hR = self.heightmap[vertexNumber + 1] * 80;
-                hU = self.heightmap[vertexNumber - self.size + 1] * 80;
-                hD = self.heightmap[vertexNumber + self.size + 1] * 80;
+                hU = self.heightmap[vertexNumber - 128 + 1] * 80;
+                hD = self.heightmap[vertexNumber + 128 + 1] * 80;
 
                 // deduce terrain normal
                 var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();
