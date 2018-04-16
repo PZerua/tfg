@@ -41,5 +41,5 @@ void main (void)
     diffuse.a = 0.9;
 
     color = diffuse;
-    //color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
+    color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
 }

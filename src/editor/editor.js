@@ -9,6 +9,8 @@ var Editor = {
 	currentKeys: {},
 	stats: new Stats(),
 	graph : new LGraph(),
+	widthNode : undefined,
+	heightNode : undefined,
 	outputNode : undefined,
 	init : function() {
 
@@ -21,24 +23,24 @@ var Editor = {
 		window.addEventListener("resize", function() { Editor.graphCanvas.resize(); } );
 
 		// Setup litegraph defualt nodes
-		var node_const = LiteGraph.createNode("basic/const");
-		node_const.title = "Width";
-		node_const.pos = [200,200];
-		this.graph.add(node_const);
-		node_const.setValue(128);
+		this.widthNode = LiteGraph.createNode("basic/const");
+		this.widthNode.title = "Width";
+		this.widthNode.pos = [200,200];
+		this.graph.add(this.widthNode);
+		this.widthNode.setValue(64);
 
-		var node_const2 = LiteGraph.createNode("basic/const");
-		node_const2.title = "Height";
-		node_const2.pos = [200,300];
-		this.graph.add(node_const2);
-		node_const2.setValue(128);
+		this.heightNode = LiteGraph.createNode("basic/const");
+		this.heightNode.title = "Height";
+		this.heightNode.pos = [200,300];
+		this.graph.add(this.heightNode);
+		this.heightNode.setValue(64);
 
 		this.outputNode = LiteGraph.createNode("heightmap/perlin");
 		this.outputNode.pos = [700,200];
 		this.graph.add(this.outputNode);
 
-		node_const.connect(0, this.outputNode, 0 );
-		node_const2.connect(0, this.outputNode, 1 );
+		this.widthNode.connect(0, this.outputNode, 0 );
+		this.heightNode.connect(0, this.outputNode, 1 );
 
 		this.graph.start()
 
