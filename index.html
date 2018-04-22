@@ -2,14 +2,21 @@
 <html>
 <head>
     <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/litegraph.css">
+    <link rel="stylesheet" href="style/litegraph-editor.css">
     <meta charset="UTF-8">
     <title>TFG</title>
 </head>
 
 <body onload="Editor.init()">
-    <div id="container">
-        <canvas id="glCanvas"></canvas>
-        <canvas id="graphCanvas"></canvas>
+    <div id="main">
+        <div id="toolBar">
+            <button id="wireframeButton" class="button">Wireframe: OFF</button>
+        </div>
+        <div id="container">
+            <canvas id="graphCanvas"></canvas>
+            <canvas id="glCanvas"></canvas>
+        </div>
     </div>
 </body>
 

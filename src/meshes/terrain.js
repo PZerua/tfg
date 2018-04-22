@@ -20,6 +20,7 @@ function Terrain(size, scale) {
     this.vboNormals;
     this.vboHeightmap;
     this.ebo;
+    this.showWireframe = 0;
 
     this.isReady = false;
 
@@ -204,7 +205,7 @@ function Terrain(size, scale) {
         self.isReady = true;
     }
 
-    this.shader = new Shader("basic", this.setupTerrain);
+    this.shader = new Shader("terrain", this.setupTerrain);
 
     this.render = function(camera) {
         if (this.isReady) {
@@ -214,6 +215,7 @@ function Terrain(size, scale) {
             this.shader.setMatrix4("u_mvp", camera.vp);
             this.shader.setMatrix4("u_view", camera.view);
             this.shader.setInt("u_heightmap", 0);
+            this.shader.setInt("u_showWireframe", this.showWireframe)
             gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_SHORT, 0);
             this.vao.unbind();
         }

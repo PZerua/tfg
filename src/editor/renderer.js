@@ -33,6 +33,18 @@ function Renderer(canvas) {
 	gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+	var self = this;
+	var wireframeButton = document.getElementById("wireframeButton")
+	wireframeButton.onclick = function() {
+		if (self.terrain.showWireframe) {
+			self.terrain.showWireframe = 0;
+			wireframeButton.textContent  = "Wireframe: OFF";
+		} else {
+			self.terrain.showWireframe  = 1;
+			wireframeButton.textContent  = "Wireframe: ON";
+		}
+	};
 }
 
 Renderer.prototype.render = function(camera) {

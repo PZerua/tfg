@@ -13,6 +13,8 @@ uniform vec3 u_eye;
 
 uniform sampler2D u_heightmap;
 
+uniform bool u_showWireframe;
+
 vec3 faceNormal(vec3 pos)
 {
     vec3 fdx = dFdx(pos);
@@ -40,6 +42,9 @@ void main (void)
     diffuse.rgb = clamp( vec3(0.701, 0.878, 0.6) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
     diffuse.a = 0.9;
 
-    color = diffuse;
-    color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
+    if (u_showWireframe) {
+        color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
+    } else {
+        color = diffuse;
+    }
 }

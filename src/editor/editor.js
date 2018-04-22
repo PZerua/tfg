@@ -14,8 +14,10 @@ var Editor = {
 	outputNode : undefined,
 	init : function() {
 
+		var container = document.getElementById("container")
 		this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-		document.body.appendChild( this.stats.dom );
+		this.stats.dom.style.position = "absolute";
+		container.appendChild( this.stats.dom );
 
 		this.graphCanvas = new LGraphCanvas("#graphCanvas", this.graph);
 		this.graphCanvas.resize();
