@@ -6,6 +6,7 @@ function OriginAxes() {
 
     this.vao;
     this.vbo;
+    this.vboColors;
 
     this.isReady = false;
 
@@ -22,6 +23,14 @@ function OriginAxes() {
         self.vertices.push(0);
         self.vertices.push(0);
 
+        self.colors.push(1);
+        self.colors.push(0);
+        self.colors.push(0);
+
+        self.colors.push(1);
+        self.colors.push(0);
+        self.colors.push(0);
+
         // Y axis
         self.vertices.push(0);
         self.vertices.push(0);
@@ -31,6 +40,14 @@ function OriginAxes() {
         self.vertices.push(1);
         self.vertices.push(0);
 
+        self.colors.push(0);
+        self.colors.push(1);
+        self.colors.push(0);
+
+        self.colors.push(0);
+        self.colors.push(1);
+        self.colors.push(0);
+
         // Z axis
         self.vertices.push(0);
         self.vertices.push(0);
@@ -39,6 +56,14 @@ function OriginAxes() {
         self.vertices.push(0);
         self.vertices.push(0);
         self.vertices.push(1);
+
+        self.colors.push(0);
+        self.colors.push(0);
+        self.colors.push(1);
+
+        self.colors.push(0);
+        self.colors.push(0);
+        self.colors.push(1);
     }
 
     this.setupAxes = function() {
@@ -54,6 +79,13 @@ function OriginAxes() {
         // The attribute position in the shader
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+        // VertexBuffer to store vertex positions
+        self.vboColors = new VertexBuffer(new Float32Array(self.colors), gl.STATIC_DRAW);
+
+        // The attribute position in the shader
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
 
         // IndexBuffer to store vertex indices
         //self.ebo = new IndexBuffer(new Uint16Array(self.indices), gl.STATIC_DRAW);
