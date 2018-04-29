@@ -15,15 +15,15 @@ PerlinNoise = new function() {
 	49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
 	138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
 	];
-	
+
 	for (var i=0; i < 256 ; i++)
 		p[256+i] = p[i] = permutation[i];
 
 	this.noise = function(x, y, z) {
 
-		var X = Math.floor(x) & 255, // FIND UNIT CUBE THAT
-			Y = Math.floor(y) & 255, // CONTAINS POINT.
-			Z = Math.floor(z) & 255;
+		var X = Math.floor(x) & 255; // FIND UNIT CUBE THAT
+		var Y = Math.floor(y) & 255; // CONTAINS POINT.
+		var Z = Math.floor(z) & 255;
 		x -= Math.floor(x);  // FIND RELATIVE X,Y,Z
 		y -= Math.floor(y);  // OF POINT IN CUBE.
 		z -= Math.floor(z);
@@ -50,7 +50,7 @@ PerlinNoise = new function() {
 	function grad(hash, x, y, z) {
 		var h = hash & 15;                      // CONVERT LO 4 BITS OF HASH CODE
 		var u = h<8 ? x : y,                 // INTO 12 GRADIENT DIRECTIONS.
-			v = h<4 ? y : h==12||h==14 ? x : z;
+			v = h<4 ? y : h==12 || h==14 ? x : z;
 			return ((h&1) == 0 ? u : -u) + ((h&2) == 0 ? v : -v);
 	}
 

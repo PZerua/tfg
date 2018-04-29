@@ -43,7 +43,7 @@ void main (void)
     diffuse.a = 0.9;
 
     if (u_showWireframe) {
-        color = mix(vec4(0.0, 0.0, 0.0, 1.0), diffuse, edgeFactor());
+        color = mix(vec4(0.1, 0.2, 0.1, 1.0), diffuse, edgeFactor());
     } else {
         color = diffuse;
     }

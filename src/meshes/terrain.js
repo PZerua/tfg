@@ -60,7 +60,7 @@ function Terrain(size, scale) {
         self.center = new vec3(self.size / 2.0, 0, self.size / 2.0);
         self.radious = Math.sqrt((self.center.x) * (self.center.x) + (self.center.z) * (self.center.z));
 
-        Editor.camera.eye = new vec3(0, self.radious * 2.5, self.radious * 1.5);
+        Editor.camera.eye = new vec3(0, self.radious * 4.5, self.radious * 2.5);
 
         var dir = vec3.vec3Sub(new vec3(0,0,0), Editor.camera.eye).normalize();
 
