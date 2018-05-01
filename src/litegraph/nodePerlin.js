@@ -29,9 +29,14 @@ NodePerlin.prototype.onExecute = function() {
             var xCord = x / width;
             var yCord = y / height; // normalize
 
-            var size = 2;  // pick a scaling value
+            var frequency = 1;
+            var amplitude = 1;
+            for (var i = 0; i < 3; i++) {
+                heightmap[x + y * width] = (PerlinNoise.noise(xCord * frequency, yCord * frequency, 2 * frequency)) * amplitude;
+                frequency *= 2;
+                amplitude *= 0.5;
+            }
 
-            heightmap[x + y * width] = (PerlinNoise.noise(size * xCord, size * yCord, 2 ));
         }
     }
 

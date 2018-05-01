@@ -21,7 +21,7 @@ function Renderer(canvas) {
 	this.axes = new OriginAxes();
 
 	// Size more than 256 exceeds the max index value: 2^16
-    this.terrain = new Terrain(64, 2);
+    this.terrain = new Terrain(128, 1);
 
     gl.clearColor(0.109, 0.129, 0.188, 1.0);
 	gl.enable(gl.DEPTH_TEST);

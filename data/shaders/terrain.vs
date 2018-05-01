@@ -22,7 +22,7 @@ void main(void)
 	normal = aNormal;
 	oVertex = aVertex;
 	oUvs = aUvs;
-	oVertex.y = height * 80.0f;
+	oVertex.y = height * 400.0f;
 
 	oBarycentric = aBarycentric;
 	gl_Position = u_mvp * vec4( oVertex, 1.0 );
