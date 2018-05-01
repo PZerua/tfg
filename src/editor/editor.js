@@ -29,13 +29,13 @@ var Editor = {
 		this.widthNode.title = "Width";
 		this.widthNode.pos = [200,200];
 		this.graph.add(this.widthNode);
-		this.widthNode.setValue(64);
+		this.widthNode.setValue(128);
 
 		this.heightNode = LiteGraph.createNode("basic/const");
 		this.heightNode.title = "Height";
 		this.heightNode.pos = [200,300];
 		this.graph.add(this.heightNode);
-		this.heightNode.setValue(64);
+		this.heightNode.setValue(128);
 
 		this.outputNode = LiteGraph.createNode("heightmap/perlin");
 		this.outputNode.pos = [700,200];
