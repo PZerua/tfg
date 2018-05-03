@@ -9,8 +9,7 @@ var Editor = {
 	currentKeys: {},
 	stats: new Stats(),
 	graph : new LGraph(),
-	widthNode : undefined,
-	heightNode : undefined,
+	sizeNode : undefined,
 	outputNode : undefined,
 	init : function() {
 
@@ -25,26 +24,19 @@ var Editor = {
 		window.addEventListener("resize", function() { Editor.graphCanvas.resize(); } );
 
 		// Setup litegraph defualt nodes
-		this.widthNode = LiteGraph.createNode("basic/const");
-		this.widthNode.title = "Width";
-		this.widthNode.pos = [200,200];
-		this.graph.add(this.widthNode);
-		this.widthNode.setValue(128);
-
-		this.heightNode = LiteGraph.createNode("basic/const");
-		this.heightNode.title = "Height";
-		this.heightNode.pos = [200,300];
-		this.graph.add(this.heightNode);
-		this.heightNode.setValue(128);
+		this.sizeNode = LiteGraph.createNode("basic/const");
+		this.sizeNode.title = "Size";
+		this.sizeNode.pos = [200,200];
+		this.graph.add(this.sizeNode);
+		this.sizeNode.setValue(128);
 
 		this.outputNode = LiteGraph.createNode("heightmap/perlin");
 		this.outputNode.pos = [700,200];
 		this.graph.add(this.outputNode);
 
-		this.widthNode.connect(0, this.outputNode, 0 );
-		this.heightNode.connect(0, this.outputNode, 1 );
+		this.sizeNode.connect(0, this.outputNode, 0 );
 
-		this.graph.start()
+		this.graph.runStep()
 
 		// Setup renderer and camera
 		this.renderer = new Renderer(this.glCanvas);

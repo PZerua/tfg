@@ -7,8 +7,7 @@ function Terrain(size, scale) {
     this.indices = [];
     this.normals = [];
     this.heightmap = [];
-    this.heightmapWidth;
-    this.heightmapHeight;
+    this.heightmapSize = 0;
     this.heightmapTexture = undefined;
     this.size = size;
     this.scale = scale;
@@ -36,10 +35,9 @@ function Terrain(size, scale) {
 
         // Get heightmap from output node TODO: This is probably not the best way to do it
         self.heightmap = Editor.outputNode.getOutputData(0);
-        self.heightmapWidth = Editor.widthNode.getOutputData(0);
-        self.heightmapHeight = Editor.heightNode.getOutputData(0);
+        self.heightmapSize = Editor.sizeNode.getOutputData(0);
 
-        self.heightmapTexture = new Texture(self.heightmapWidth, self.heightmapHeight, this.heightmap);
+        self.heightmapTexture = new Texture(self.heightmapSize, self.heightmapSize, this.heightmap);
 
         // -- Create the grid --
         // Store vertices
@@ -125,15 +123,15 @@ function Terrain(size, scale) {
                     yPos = self.size - 2;
 
                 // Obtain correct index from heightmap when sizes mismatch (TODO: causes artifacts)
-                var xIdx = Math.round(xPos * self.heightmapWidth / self.size)
-                var yIdx = Math.round(yPos * self.heightmapHeight / self.size)
+                var xIdx = Math.round(xPos * self.heightmapSize / self.size)
+                var yIdx = Math.round(yPos * self.heightmapSize / self.size)
 
-                var vertexNumber = (xIdx + yIdx * self.heightmapWidth);
+                var vertexNumber = (xIdx + yIdx * self.heightmapSize);
 
                 hL = self.heightmap[vertexNumber - 1] * 80;
                 hR = self.heightmap[vertexNumber + 1] * 80;
-                hU = self.heightmap[vertexNumber - self.heightmapWidth + 1] * 80;
-                hD = self.heightmap[vertexNumber + self.heightmapWidth + 1] * 80;
+                hU = self.heightmap[vertexNumber - self.heightmapSize + 1] * 80;
+                hD = self.heightmap[vertexNumber + self.heightmapSize + 1] * 80;
 
                 // deduce terrain normal
                 var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();

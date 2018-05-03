@@ -1,8 +1,8 @@
 //node constructor class
 function NodePerlin() {
 
-    this.addInput("Width", "number");
-    this.addInput("Height", "number");
+    this.addInput("Size", "number");
+    this.addInput("Octaves", "number");
     this.addOutput("Heightmap", "array");
 }
 
@@ -14,25 +14,29 @@ NodePerlin.size = [300, 50];
 //function to call when the node is executed
 NodePerlin.prototype.onExecute = function() {
 
-    var width = this.getInputData(0);
-    if (width === undefined)
-        width = 128;
-    var height = this.getInputData(1);
-    if (height === undefined)
-        height = 0;
+    var size = this.getInputData(0);
+    if (size === undefined)
+        size = 128;
+
+    var octaves = this.getInputData(1);
+    if (octaves === undefined)
+        octaves = 3;
 
     var heightmap = []
 
     // Precalculate heightmap (this will be moved to litegraph.js)
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            var xCord = x / width;
-            var yCord = y / height; // normalize
+    for (var y = 0; y < size; y++) {
+        for (var x = 0; x < size; x++) {
+            var xCord = x / size;
+            var yCord = y / size; // normalize
 
             var frequency = 1;
             var amplitude = 1;
-            for (var i = 0; i < 3; i++) {
-                heightmap[x + y * width] = (PerlinNoise.noise(xCord * frequency, yCord * frequency, 2 * frequency)) * amplitude;
+
+            heightmap[x + y * size] = 0;
+
+            for (var i = 0; i < octaves; i++) {
+                heightmap[x + y * size] += (PerlinNoise.noise(xCord * frequency, yCord * frequency, 2 * frequency)) * amplitude;
                 frequency *= 2;
                 amplitude *= 0.5;
             }
