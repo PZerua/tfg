@@ -7,11 +7,12 @@ html, body {
 }
 
 .button {
-    background-color: #b3e099;
+    background-color: #008c9e;
     border: none;
     color: black;
     width: 145px;
-    height: 42px;
+    height: 38px;
+    margin: 4px;
     text-align: center;
     font-weight: bold;
     font-size: 16px;
@@ -19,7 +20,7 @@ html, body {
 }
 
 .button:hover {
-    background-color: #9fca87;
+    background-color: #05a6bb;
 }
 
 #main {
@@ -37,7 +38,7 @@ html, body {
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    background-color: #1c2130
+    background-color: #2d2d29
 }
 
 #container {

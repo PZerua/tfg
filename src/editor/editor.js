@@ -10,6 +10,8 @@ var Editor = {
 	stats: new Stats(),
 	graph : new LGraph(),
 	sizeNode : undefined,
+	octavesNode : undefined,
+	heightScaleNode : undefined,
 	outputNode : undefined,
 	init : function() {
 
@@ -23,18 +25,32 @@ var Editor = {
 
 		window.addEventListener("resize", function() { Editor.graphCanvas.resize(); } );
 
-		// Setup litegraph defualt nodes
+		// Setup litegraph default nodes
 		this.sizeNode = LiteGraph.createNode("basic/const");
 		this.sizeNode.title = "Size";
 		this.sizeNode.pos = [200,200];
 		this.graph.add(this.sizeNode);
 		this.sizeNode.setValue(128);
 
+		this.octavesNode = LiteGraph.createNode("basic/const");
+		this.octavesNode.title = "Octaves";
+		this.octavesNode.pos = [200,250];
+		this.graph.add(this.octavesNode);
+		this.octavesNode.setValue(4);
+
+		this.heightScaleNode = LiteGraph.createNode("basic/const");
+		this.heightScaleNode.title = "Height Scale";
+		this.heightScaleNode.pos = [200,300];
+		this.graph.add(this.heightScaleNode);
+		this.heightScaleNode.setValue(40);
+
 		this.outputNode = LiteGraph.createNode("heightmap/perlin");
-		this.outputNode.pos = [700,200];
+		this.outputNode.pos = [500,200];
 		this.graph.add(this.outputNode);
 
 		this.sizeNode.connect(0, this.outputNode, 0 );
+		this.octavesNode.connect(0, this.outputNode, 1 );
+		this.heightScaleNode.connect(0, this.outputNode, 2 );
 
 		this.graph.runStep()
 
@@ -43,8 +59,43 @@ var Editor = {
 		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 1000.0);
 	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
 
+		this.centerCamera();
+
+		var self = this;
+		var wireframeButton = document.getElementById("wireframeButton")
+		wireframeButton.onclick = function() {
+			if (self.renderer.terrain.showWireframe) {
+				self.renderer.terrain.showWireframe = 0;
+				wireframeButton.textContent  = "Wireframe: OFF";
+			} else {
+				self.renderer.terrain.showWireframe = 1;
+				wireframeButton.textContent  = "Wireframe: ON";
+			}
+		};
+
+		var runStepButton = document.getElementById("runStepButton")
+		runStepButton.onclick = function() {
+			self.graph.runStep();
+			self.renderer.buildTerrain();
+		};
+
+		var centerCameraButton = document.getElementById("centerCameraButton")
+		centerCameraButton.onclick = function() {
+			self.centerCamera()
+		};
+
 		mainLoop();
 	},
+	centerCamera: function() {
+		this.camera.eye = new vec3(0, this.renderer.terrain.radious * 1.5, this.renderer.terrain.radious * 1.0);
+
+		var dir = vec3.vec3Sub(new vec3(0,0,0), this.camera.eye).normalize();
+
+		var pitch = Math.asin(dir.y);
+		var yaw = Math.acos(dir.x/Math.cos(pitch));
+
+		this.camera.setYawPitch(-Math.toDegrees(yaw), Math.toDegrees(pitch));
+	}
 };
 
 function mainLoop() {

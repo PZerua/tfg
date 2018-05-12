@@ -1,16 +1,8 @@
-function Terrain(size, scale) {
+function Terrain(scale) {
 
     this.shader;
-    this.vertices = [];
-    this.uvs = [];
-    this.barycentricBuffer = [];
-    this.indices = [];
-    this.normals = [];
-    this.heightmap = [];
-    this.heightmapSize = 0;
-    this.heightmapTexture = undefined;
-    this.size = size;
     this.scale = scale;
+    this.firstCreation = true;
 
     this.vao;
     this.vbo;
@@ -25,7 +17,7 @@ function Terrain(size, scale) {
 
     var self = this;
 
-    this.createGrid = function() {
+    this.buildTerrain = function() {
         var minX = Infinity;
         var minY = Infinity;
         var minZ = Infinity;
@@ -33,11 +25,23 @@ function Terrain(size, scale) {
         var maxY = -Infinity;
         var maxZ = -Infinity;
 
-        // Get heightmap from output node TODO: This is probably not the best way to do it
-        self.heightmap = Editor.outputNode.getOutputData(0);
-        self.heightmapSize = Editor.sizeNode.getOutputData(0);
+        self.vertices = [];
+        self.uvs = [];
+        self.barycentricBuffer = [];
+        self.indices = [];
+        self.normals = [];
+        self.heightmap = [];
+        self.heightmapHeightScale = 0;
+        self.heightmapTexture = undefined;
 
-        self.heightmapTexture = new Texture(self.heightmapSize, self.heightmapSize, this.heightmap);
+        // Get heightmap from output node TODO: This is probably not the best way to do it
+        var heightmapOBJ = Editor.outputNode.getOutputData(0);
+
+        self.heightmap = heightmapOBJ.heightmap
+        self.size = heightmapOBJ.size
+        self.heightmapHeightScale = heightmapOBJ.heightScale;
+
+        self.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
 
         // -- Create the grid --
         // Store vertices
@@ -58,14 +62,9 @@ function Terrain(size, scale) {
         self.center = new vec3(self.size / 2.0, 0, self.size / 2.0);
         self.radious = Math.sqrt((self.center.x) * (self.center.x) + (self.center.z) * (self.center.z));
 
-        Editor.camera.eye = new vec3(0, self.radious * 1.5, self.radious * 1.0);
-
-        var dir = vec3.vec3Sub(new vec3(0,0,0), Editor.camera.eye).normalize();
-
-        var pitch = Math.asin(dir.y);
-        var yaw = Math.acos(dir.x/Math.cos(pitch));
-
-        Editor.camera.setYawPitch(-Math.toDegrees(yaw), Math.toDegrees(pitch));
+        if (self.firstCreation) {
+            Editor.centerCamera()
+        }
 
         // -- Barypoints --
         var currentBaryPoint = new vec3(1, 0, 0);
@@ -122,16 +121,12 @@ function Terrain(size, scale) {
                 if (y == self.size - 1)
                     yPos = self.size - 2;
 
-                // Obtain correct index from heightmap when sizes mismatch (TODO: causes artifacts)
-                var xIdx = Math.round(xPos * self.heightmapSize / self.size)
-                var yIdx = Math.round(yPos * self.heightmapSize / self.size)
+                var vertexNumber = (xPos + yPos * self.size);
 
-                var vertexNumber = (xIdx + yIdx * self.heightmapSize);
-
-                hL = self.heightmap[vertexNumber - 1] * 80;
-                hR = self.heightmap[vertexNumber + 1] * 80;
-                hU = self.heightmap[vertexNumber - self.heightmapSize + 1] * 80;
-                hD = self.heightmap[vertexNumber + self.heightmapSize + 1] * 80;
+                hL = self.heightmap[vertexNumber - 1] * 100;
+                hR = self.heightmap[vertexNumber + 1] * 100;
+                hU = self.heightmap[vertexNumber - self.size + 1] * 100;
+                hD = self.heightmap[vertexNumber + self.size + 1] * 100;
 
                 // deduce terrain normal
                 var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();
@@ -158,11 +153,13 @@ function Terrain(size, scale) {
                 self.indices.push((col - 1) + (row + 1) * self.size);
         	}
     	}
+
+        self.firstCreation = false;
     }
 
     this.setupTerrain = function() {
 
-        self.createGrid();
+        self.buildTerrain();
 
         // -- Setup buffers --
         self.vao = new VertexArray();
@@ -196,7 +193,7 @@ function Terrain(size, scale) {
         gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
 
         // IndexBuffer to store vertex indices
-        self.ebo = new IndexBuffer(new Uint16Array(self.indices), gl.STATIC_DRAW);
+        self.ebo = new IndexBuffer(new Uint32Array(self.indices), gl.STATIC_DRAW);
 
         self.vao.unbind();
 
@@ -213,8 +210,9 @@ function Terrain(size, scale) {
             this.shader.setMatrix4("u_mvp", camera.vp);
             this.shader.setMatrix4("u_view", camera.view);
             this.shader.setInt("u_heightmap", 0);
+            this.shader.setFloat("u_heightmapScale", this.heightmapHeightScale);
             this.shader.setInt("u_showWireframe", this.showWireframe)
-            gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_INT, 0);
             this.vao.unbind();
         }
     }

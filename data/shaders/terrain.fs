@@ -39,11 +39,11 @@ void main (void)
     vec3 R = normalize(reflect(-L, N));
     vec3 V = normalize(u_eye - oVertex);
 
-    diffuse.rgb = clamp( vec3(0.701, 0.878, 0.6) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
+    diffuse.rgb = clamp( vec3(0, 0.549, 0.619) * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
     diffuse.a = 1.0;
 
     if (u_showWireframe) {
-        color = mix(vec4(0.1, 0.2, 0.1, 1.0), diffuse, edgeFactor());
+        color = mix(vec4(0, 0.249, 0.319, 1.0), diffuse, edgeFactor());
     } else {
         color = diffuse;
     }

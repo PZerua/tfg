@@ -15,15 +15,18 @@ uniform vec3 u_eye;
 uniform mat4 u_mvp;
 uniform mat4 u_view;
 uniform sampler2D u_heightmap;
+uniform float u_heightmapScale;
 
 void main(void)
 {
 	float height = texture(u_heightmap, aUvs).r;
+
+	height = height * 2.0 - 1.0;
+
 	normal = aNormal;
 	oVertex = aVertex;
 	oUvs = aUvs;
-
-	oVertex.y = height * 60.0f;
+	oVertex.y = height * u_heightmapScale;
 
 	oBarycentric = aBarycentric;
 	gl_Position = u_mvp * vec4( oVertex, 1.0 );
