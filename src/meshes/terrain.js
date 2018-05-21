@@ -123,10 +123,10 @@ function Terrain(scale) {
 
                 var vertexNumber = (xPos + yPos * self.size);
 
-                hL = self.heightmap[vertexNumber - 1] * 100;
-                hR = self.heightmap[vertexNumber + 1] * 100;
-                hU = self.heightmap[vertexNumber - self.size + 1] * 100;
-                hD = self.heightmap[vertexNumber + self.size + 1] * 100;
+                hL = self.heightmap[vertexNumber - 1] * self.heightmapHeightScale;
+                hR = self.heightmap[vertexNumber + 1] * self.heightmapHeightScale;
+                hU = self.heightmap[vertexNumber - self.size + 1] * self.heightmapHeightScale;
+                hD = self.heightmap[vertexNumber + self.size + 1] * self.heightmapHeightScale;
 
                 // deduce terrain normal
                 var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();
