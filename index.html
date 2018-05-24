@@ -23,21 +23,40 @@
     </div>
 </body>
 
-<script src="src/external/litegraph.js"></script>
-<script src="src/litegraph/PerlinNoise.js"></script>
-<script src="src/litegraph/nodePerlin.js"></script>
-<script src="src/external/stats.min.js"></script>
+<script>
+    var gl = document.getElementById("glCanvas").getContext("webgl2");
+    if (!gl) {
+        console.error("There is no support for WebGL2");
+    }
+    else {
+        gl.getExtension('EXT_color_buffer_float')
+        console.log("WebGL2 context loaded");
+    }
+
+</script>
+
+<!--Core-->
+<script src="src/graphics/shader.js"></script>
+<script src="src/graphics/texture.js"></script>
+<script src="src/graphics/frameBuffer.js"></script>
 <script src="src/graphics/buffers/vertexArray.js"></script>
 <script src="src/graphics/buffers/vertexBuffer.js"></script>
 <script src="src/graphics/buffers/indexBuffer.js"></script>
-<script src="src/utils/mathUtils.js"></script>
-<script src="src/utils/fileUtils.js"></script>
 <script src="src/math/vec2.js"></script>
 <script src="src/math/vec3.js"></script>
 <script src="src/math/vec4.js"></script>
 <script src="src/math/mat4.js"></script>
-<script src="src/graphics/shader.js"></script>
-<script src="src/graphics/texture.js"></script>
+<script src="src/utils/mathUtils.js"></script>
+<script src="src/utils/fileUtils.js"></script>
+
+<!--Libs-->
+<script src="src/external/litegraph.js"></script>
+<script src="src/external/stats.min.js"></script>
+
+<!--Editor-->
+<script src="src/litegraph/PerlinNoiseNode.js"></script>
+<script src="src/litegraph/ValueNoiseNode.js"></script>
+<script src="src/litegraph/OutputNode.js"></script>
 <script src="src/meshes/terrain.js"></script>
 <script src="src/meshes/originAxes.js"></script>
 <script src="src/editor/camera.js"></script>

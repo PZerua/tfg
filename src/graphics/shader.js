@@ -2,6 +2,7 @@ function Shader(shaderName, shaderCallback) {
 
     this.programId;
     this.isLoaded = false;
+    this.shaderName = shaderName;
 
     var numCompleted = 0;
     var result = [];
@@ -38,13 +39,13 @@ function Shader(shaderName, shaderCallback) {
         if (!gl.getShaderParameter(vertex, gl.COMPILE_STATUS))
         {
             var log = gl.getShaderInfoLog(vertex);
-            console.error("Error in vertex shader compilation\n" + log);
+            console.error("Error compiling vertex shader from \"" + self.shaderName + "\"\n" + log);
         }
         // Print compile errors for fragment compilation
         if (!gl.getShaderParameter(fragment, gl.COMPILE_STATUS))
         {
             var log = gl.getShaderInfoLog(fragment);
-            console.error("Error in fragment shader compilation\n" + log);
+            console.error("Error compiling fragment shader from \"" + self.shaderName + "\"\n" + log);
         }
 
         // Shader Program
@@ -66,7 +67,17 @@ function Shader(shaderName, shaderCallback) {
         gl.deleteShader(vertex);
         gl.deleteShader(fragment);
 
+        console.log("Shader \"" + self.shaderName + "\" compiled")
+
         shaderCallback();
+    }
+
+    this.enable = function() {
+        gl.useProgram(this.programId);
+    }
+
+    this.disable = function() {
+        gl.useProgram(null);
     }
 
     this.setMatrix4 = function(name, matrix) {

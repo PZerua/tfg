@@ -29,19 +29,18 @@ function Terrain(scale) {
         self.uvs = [];
         self.barycentricBuffer = [];
         self.indices = [];
-        self.normals = [];
         self.heightmap = [];
         self.heightmapHeightScale = 0;
         self.heightmapTexture = undefined;
+        self.normalsTexture = undefined;
 
         // Get heightmap from output node TODO: This is probably not the best way to do it
         var heightmapOBJ = Editor.outputNode.getOutputData(0);
 
-        self.heightmap = heightmapOBJ.heightmap
-        self.size = heightmapOBJ.size
+        self.heightmapTexture = heightmapOBJ.heightmapTexture;
+        self.normalsTexture = heightmapOBJ.normalsTexture;
+        self.size = heightmapOBJ.size;
         self.heightmapHeightScale = heightmapOBJ.heightScale;
-
-        self.heightmapTexture = new Texture(self.size, self.size, this.heightmap);
 
         // -- Create the grid --
         // Store vertices
@@ -103,40 +102,6 @@ function Terrain(scale) {
         var delta = self.barycentricBuffer.length - self.vertices.length;
         while (delta-- > 0) { self.barycentricBuffer.pop(); }
 
-        // -- Normals --
-        for (var y = 0; y < self.size; y++) {
-            for (var x = 0; x < self.size; x++) {
-
-                var hL, hR, hD, hU;
-
-                var xPos = x;
-                var yPos = y;
-
-                if (x == 0)
-                    xPos = 1;
-                if (y == 0)
-                    yPos = 1;
-                if (x == self.size - 1)
-                    xPos = self.size - 2;
-                if (y == self.size - 1)
-                    yPos = self.size - 2;
-
-                var vertexNumber = (xPos + yPos * self.size);
-
-                hL = self.heightmap[vertexNumber - 1] * self.heightmapHeightScale;
-                hR = self.heightmap[vertexNumber + 1] * self.heightmapHeightScale;
-                hU = self.heightmap[vertexNumber - self.size + 1] * self.heightmapHeightScale;
-                hD = self.heightmap[vertexNumber + self.size + 1] * self.heightmapHeightScale;
-
-                // deduce terrain normal
-                var normal = new vec3(hL - hR, 2.0, hD - hU).normalize();
-
-                self.normals.push(normal.x);
-                self.normals.push(normal.y);
-                self.normals.push(normal.z);
-            }
-        }
-
     	// Store indices
     	var row, col;
     	for (row = 0; row < self.size - 1; row++) {
@@ -185,13 +150,6 @@ function Terrain(scale) {
         gl.enableVertexAttribArray(2);
         gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
 
-        // VertexBuffer to store normals
-        self.vboNormals = new VertexBuffer(new Float32Array(self.normals), gl.STATIC_DRAW);
-
-        // The attribute position in the shader
-        gl.enableVertexAttribArray(3);
-        gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
-
         // IndexBuffer to store vertex indices
         self.ebo = new IndexBuffer(new Uint32Array(self.indices), gl.STATIC_DRAW);
 
@@ -205,14 +163,26 @@ function Terrain(scale) {
     this.render = function(camera) {
         if (this.isReady) {
             this.vao.bind();
-            gl.useProgram(this.shader.programId);
-            this.shader.setVec3("u_eye", camera.eye);
+            this.shader.enable();
+
             this.shader.setMatrix4("u_mvp", camera.vp);
-            this.shader.setMatrix4("u_view", camera.view);
-            this.shader.setInt("u_heightmap", 0);
             this.shader.setFloat("u_heightmapScale", this.heightmapHeightScale);
             this.shader.setInt("u_showWireframe", this.showWireframe)
+
+            // Set heightmap and normals textures
+            this.shader.setInt("u_heightmapTexture", 0)
+            gl.activeTexture(gl.TEXTURE0);
+            this.heightmapTexture.bind();
+            this.shader.setInt("u_normalsTexture", 1)
+            gl.activeTexture(gl.TEXTURE1);
+            this.normalsTexture.bind();
+
+            // Used for lightning
+            this.shader.setVec3("u_eye", camera.eye);
+            this.shader.setMatrix4("u_view", camera.view);
+
             gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_INT, 0);
+            this.shader.disable();
             this.vao.unbind();
         }
     }

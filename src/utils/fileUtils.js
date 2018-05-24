@@ -6,7 +6,7 @@ function loadFile(url, callback, args) {
         // If the request is "DONE" (completed or failed)
         if (request.readyState == XMLHttpRequest.DONE) {
             if (request.status == 200) {
-                console.log('"' + url + '" loaded');
+                //console.log('"' + url + '" loaded');
                 // Do whatever we want with the file
                 callback(request.responseText, args)
             }

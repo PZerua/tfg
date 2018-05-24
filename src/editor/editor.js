@@ -10,8 +10,11 @@ var Editor = {
 	stats: new Stats(),
 	graph : new LGraph(),
 	sizeNode : undefined,
+	amplitudeNode : undefined,
 	octavesNode : undefined,
 	heightScaleNode : undefined,
+	frequencyNode : undefined,
+	perlinNode: undefined,
 	outputNode : undefined,
 	init : function() {
 
@@ -28,35 +31,58 @@ var Editor = {
 		// Setup litegraph default nodes
 		this.sizeNode = LiteGraph.createNode("basic/const");
 		this.sizeNode.title = "Size";
-		this.sizeNode.pos = [200,200];
+		this.sizeNode.pos = [200,500];
 		this.graph.add(this.sizeNode);
-		this.sizeNode.setValue(128);
+		this.sizeNode.setValue(256);
+
+		this.amplitudeNode = LiteGraph.createNode("basic/const");
+		this.amplitudeNode.title = "Amplitude";
+		this.amplitudeNode.pos = [200,550];
+		this.graph.add(this.amplitudeNode);
+		this.amplitudeNode.setValue(1.5);
+
+		this.frequencyNode = LiteGraph.createNode("basic/const");
+		this.frequencyNode.title = "Frequency";
+		this.frequencyNode.pos = [200,600];
+		this.graph.add(this.frequencyNode);
+		this.frequencyNode.setValue(1);
 
 		this.octavesNode = LiteGraph.createNode("basic/const");
 		this.octavesNode.title = "Octaves";
-		this.octavesNode.pos = [200,250];
+		this.octavesNode.pos = [200,650];
 		this.graph.add(this.octavesNode);
-		this.octavesNode.setValue(4);
+		this.octavesNode.setValue(6);
 
 		this.heightScaleNode = LiteGraph.createNode("basic/const");
 		this.heightScaleNode.title = "Height Scale";
-		this.heightScaleNode.pos = [200,300];
+		this.heightScaleNode.pos = [200,700];
 		this.graph.add(this.heightScaleNode);
-		this.heightScaleNode.setValue(40);
+		this.heightScaleNode.setValue(200);
 
-		this.outputNode = LiteGraph.createNode("heightmap/perlin");
-		this.outputNode.pos = [500,200];
+		this.perlinNode = LiteGraph.createNode("heightmap/perlinNoise");
+		this.perlinNode.pos = [500,500];
+		this.graph.add(this.perlinNode);
+
+		var idx = 0;
+		// Sample nodes in order
+		this.sizeNode.connect(0, this.perlinNode, idx++ );
+		this.amplitudeNode.connect(0, this.perlinNode, idx++ );
+		this.frequencyNode.connect(0, this.perlinNode, idx++ );
+		this.octavesNode.connect(0, this.perlinNode, idx++ );
+		this.heightScaleNode.connect(0, this.perlinNode, idx++ );
+
+		this.outputNode = LiteGraph.createNode("heightmap/heightmapOutput");
+		this.outputNode.pos = [750,500];
 		this.graph.add(this.outputNode);
 
-		this.sizeNode.connect(0, this.outputNode, 0 );
-		this.octavesNode.connect(0, this.outputNode, 1 );
-		this.heightScaleNode.connect(0, this.outputNode, 2 );
+		this.perlinNode.connect(0, this.outputNode, 0);
 
+		// Run first step
 		this.graph.runStep()
 
 		// Setup renderer and camera
 		this.renderer = new Renderer(this.glCanvas);
-		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 1000.0);
+		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 5000.0);
 	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
 
 		this.centerCamera();
@@ -87,7 +113,7 @@ var Editor = {
 		mainLoop();
 	},
 	centerCamera: function() {
-		this.camera.eye = new vec3(0, this.renderer.terrain.radious * 1.5, this.renderer.terrain.radious * 1.0);
+		this.camera.eye = new vec3(0, this.renderer.terrain.radious * 1.5, this.renderer.terrain.radious * 3.0);
 
 		var dir = vec3.vec3Sub(new vec3(0,0,0), this.camera.eye).normalize();
 
@@ -108,14 +134,16 @@ function mainLoop() {
 	Editor.prevMousePos.x = Editor.mousePos.x;
 	Editor.prevMousePos.y = Editor.mousePos.y;
 
+	var vel = 4.0;
+
 	if (Editor.currentKeys["w"] === true)
-		Editor.camera.eye.add(vec3.vec3Normalize(Editor.camera.front));
+		Editor.camera.eye.add(vec3.vec3Normalize(Editor.camera.front).multiplyScalar(vel));
 	if (Editor.currentKeys["s"] === true)
-		Editor.camera.eye.sub(vec3.vec3Normalize(Editor.camera.front));
+		Editor.camera.eye.sub(vec3.vec3Normalize(Editor.camera.front).multiplyScalar(vel));
 	if (Editor.currentKeys["a"] === true)
-		Editor.camera.eye.sub(vec3.vec3Normalize(Editor.camera.front.cross(Editor.camera.up)));
+		Editor.camera.eye.sub(vec3.vec3Normalize(Editor.camera.front.cross(Editor.camera.up)).multiplyScalar(vel));
 	if (Editor.currentKeys["d"] === true)
-		Editor.camera.eye.add(vec3.vec3Normalize(Editor.camera.front.cross(Editor.camera.up)));
+		Editor.camera.eye.add(vec3.vec3Normalize(Editor.camera.front.cross(Editor.camera.up)).multiplyScalar(vel));
 
 	if (Editor.isLeftClicking)
 		Editor.camera.addYawPitch(-Editor.mouseDelta.x * 0.2, Editor.mouseDelta.y * 0.2);
@@ -134,7 +162,7 @@ window.addEventListener("resize", function(event) {
 	Editor.glCanvas.width = window.innerWidth
 	Editor.glCanvas.height = window.innerHeight
 
-	Editor.camera.setPerspective(45.0, Editor.glCanvas.width / Editor.glCanvas.height, 0.1, 1000.0);
+	Editor.camera.setPerspective(45.0, Editor.glCanvas.width / Editor.glCanvas.height, 0.1, 5000.0);
 	Editor.camera.setViewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
 
 });

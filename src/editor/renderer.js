@@ -1,5 +1,3 @@
-var gl;
-
 function Renderer(canvas) {
 
 	canvas.width = window.innerWidth
@@ -10,18 +8,12 @@ function Renderer(canvas) {
 		|| document.documentElement.clientHeight
 		|| document.body.clientHeight;
 
-    gl = canvas.getContext("webgl2");
-
-	if (!gl) {
-        console.error("There is no support for WebGL2");
-        return;
-    }
-	else console.log("WebGL2 context loaded");
+	// this.heightmapTex = new Texture(256, 256, gl.R16F, gl.RED, gl.FLOAT, null);
+	// this.framebufer = new FrameBuffer(256, 256, this.heightmapTex, "perlinNoise");
 
 	this.axes = new OriginAxes();
-
 	// Size more than 256 exceeds the max index value: 2^16
-    this.terrain = new Terrain(1);
+    this.terrain = new Terrain(4);
 
     gl.clearColor(0.176, 0.176, 0.160, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -36,6 +28,8 @@ function Renderer(canvas) {
 }
 
 Renderer.prototype.render = function(camera) {
+
+	gl.viewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	this.axes.render(camera);
@@ -43,6 +37,5 @@ Renderer.prototype.render = function(camera) {
 }
 
 Renderer.prototype.buildTerrain = function() {
-
 	this.terrain.setupTerrain();
 }
