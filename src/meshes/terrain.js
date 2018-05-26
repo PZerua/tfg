@@ -61,10 +61,6 @@ function Terrain(scale) {
         self.center = new vec3(self.size / 2.0, 0, self.size / 2.0);
         self.radious = Math.sqrt((self.center.x) * (self.center.x) + (self.center.z) * (self.center.z));
 
-        if (self.firstCreation) {
-            Editor.centerCamera()
-        }
-
         // -- Barypoints --
         var currentBaryPoint = new vec3(1, 0, 0);
         var lastBaryPoint = new vec3(0, 0, 0);
@@ -158,7 +154,8 @@ function Terrain(scale) {
         self.isReady = true;
     }
 
-    this.shader = new Shader("terrain", this.setupTerrain);
+    this.shader = Shader.getShader("terrain");
+    this.setupTerrain();
 
     this.render = function(camera) {
         if (this.isReady) {

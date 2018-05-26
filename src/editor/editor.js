@@ -77,15 +77,10 @@ var Editor = {
 
 		this.perlinNode.connect(0, this.outputNode, 0);
 
-		// Run first step
-		this.graph.runStep()
-
 		// Setup renderer and camera
 		this.renderer = new Renderer(this.glCanvas);
 		this.camera.setPerspective(45.0, this.glCanvas.width / this.glCanvas.height, 0.1, 5000.0);
 	    this.camera.setViewport(0, 0, this.glCanvas.width, this.glCanvas.height);
-
-		this.centerCamera();
 
 		var self = this;
 		var wireframeButton = document.getElementById("wireframeButton")

@@ -52,12 +52,7 @@ class FrameBuffer {
 
         this.vao.unbind();
 
-        var self = this;
-        function callback() {
-            self.render();
-        }
-
-        this.shader = new Shader(shaderName, callback);
+        this.shader = Shader.getShader(shaderName);
     }
 
     bind() {

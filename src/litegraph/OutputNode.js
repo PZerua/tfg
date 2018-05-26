@@ -3,13 +3,7 @@ function OutputNode() {
 
     this.addInput("Heightmap");
     this.addOutput("Heightmap");
-
-    this.heighmapOBJ = {
-        heightmapTexture: undefined,
-        normalsTexture: undefined,
-        size: 0,
-        heightScale: 0
-    }
+    
 }
 
 //name to show
@@ -41,6 +35,8 @@ OutputNode.prototype.onExecute = function() {
     this.heighmapOBJ.normalsTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA16F, gl.RGBA, gl.FLOAT, null);
     // Create framebuffer providing the texture and a custom shader
     this.fboNormals = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.normalsTexture.textureId, "calcNormals", setNormalsUniformsCallback);
+
+    this.fboNormals.render();
 
     this.setOutputData(0, this.heighmapOBJ);
 }
