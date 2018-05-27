@@ -39,6 +39,7 @@ void main (void)
     diffuse.rgb = clamp( vec3(0, 0.549, 0.619) * max(dot(N,L), 0.0), 0.0, 1.0 );
     diffuse.a = 1.0;
 
+    //diffuse.rgb = 0.2 * vec3(0, 0.549, 0.619) + heightmapTex.rrr * diffuse.rgb;
     diffuse.rgb = heightmapTex.rrr + diffuse.rgb;
 
     if (u_showWireframe) {
@@ -47,6 +48,7 @@ void main (void)
         fragColor = diffuse;
     }
 
+    //fragColor = vec4(heightmapTex.rrr, 1.0);
     //fragColor = normalsTex;
 
 }

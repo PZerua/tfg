@@ -35,6 +35,7 @@ function Renderer(canvas) {
 		self.shadersReady = true;
 	}
 
+	// Precompile shaders
 	var numCompiled = 0;
 	var self = this;
 	function precompileShadersCallback() {
@@ -45,7 +46,6 @@ function Renderer(canvas) {
 		}
 	}
 
-	// Precompile shaders
 	Shader.getShader("terrain", precompileShadersCallback)
 	Shader.getShader("axes", precompileShadersCallback)
 	Shader.getShader("perlinNoise", precompileShadersCallback)
