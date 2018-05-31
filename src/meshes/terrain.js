@@ -39,6 +39,7 @@ function Terrain(scale) {
 
         self.heightmapTexture = heightmapOBJ.heightmapTexture;
         self.normalsTexture = heightmapOBJ.normalsTexture;
+        self.colorTexture = heightmapOBJ.colorTexture;
         self.size = heightmapOBJ.size;
         self.heightmapHeightScale = heightmapOBJ.heightScale;
 
@@ -173,6 +174,9 @@ function Terrain(scale) {
             this.shader.setInt("u_normalsTexture", 1)
             gl.activeTexture(gl.TEXTURE1);
             this.normalsTexture.bind();
+            this.shader.setInt("u_colorTexture", 2)
+            gl.activeTexture(gl.TEXTURE2);
+            this.colorTexture.bind();
 
             // Used for lightning
             this.shader.setVec3("u_eye", camera.eye);

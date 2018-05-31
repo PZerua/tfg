@@ -29,7 +29,7 @@ function Renderer(canvas) {
 
 		this.axes = new OriginAxes();
 		// Size more than 256 exceeds the max index value: 2^16
-		this.terrain = new Terrain(4);
+		this.terrain = new Terrain(2);
 
 		Editor.centerCamera();
 		self.shadersReady = true;
@@ -41,7 +41,7 @@ function Renderer(canvas) {
 	function precompileShadersCallback() {
 		numCompiled++;
 
-		if (numCompiled === 5) {
+		if (numCompiled === 6) {
 			self.initRenderer();
 		}
 	}
@@ -51,6 +51,7 @@ function Renderer(canvas) {
 	Shader.getShader("perlinNoise", precompileShadersCallback)
 	Shader.getShader("valueNoise", precompileShadersCallback)
 	Shader.getShader("calcNormals", precompileShadersCallback)
+	Shader.getShader("calcColor", precompileShadersCallback)
 }
 
 Renderer.prototype.render = function(camera) {
