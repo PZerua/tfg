@@ -41,7 +41,7 @@ function Renderer(canvas) {
 	function precompileShadersCallback() {
 		numCompiled++;
 
-		if (numCompiled === 6) {
+		if (numCompiled === 7) {
 			self.initRenderer();
 		}
 	}
@@ -50,6 +50,7 @@ function Renderer(canvas) {
 	Shader.getShader("axes", precompileShadersCallback)
 	Shader.getShader("perlinNoise", precompileShadersCallback)
 	Shader.getShader("valueNoise", precompileShadersCallback)
+	Shader.getShader("cellularNoise", precompileShadersCallback)
 	Shader.getShader("calcNormals", precompileShadersCallback)
 	Shader.getShader("calcColor", precompileShadersCallback)
 }
