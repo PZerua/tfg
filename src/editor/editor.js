@@ -45,7 +45,7 @@ var Editor = {
 		this.frequencyNode.title = "Frequency";
 		this.frequencyNode.pos = [200,600];
 		this.graph.add(this.frequencyNode);
-		this.frequencyNode.setValue(1.5);
+		this.frequencyNode.setValue(3);
 
 		this.octavesNode = LiteGraph.createNode("basic/const");
 		this.octavesNode.title = "Octaves";
@@ -121,7 +121,7 @@ var Editor = {
 		mainLoop();
 	},
 	centerCamera: function() {
-		this.camera.eye = new vec3(0, this.renderer.terrain.radious * 1.5, this.renderer.terrain.radious * 2.5);
+		this.camera.eye = new vec3(0, this.renderer.terrain.radious * 1.5, this.renderer.terrain.radious * 2.);
 
 		var dir = vec3.vec3Sub(new vec3(0,0,0), this.camera.eye).normalize();
 
