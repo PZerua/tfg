@@ -164,10 +164,6 @@ function Terrain(scale) {
         gl.activeTexture(gl.TEXTURE2);
         this.colorTexture.bind();
 
-        // Used for lightning
-        this.shader.setVec3("u_eye", camera.eye);
-        this.shader.setMatrix4("u_view", camera.view);
-
         gl.drawElements(gl.TRIANGLE_STRIP, this.indices.length, gl.UNSIGNED_INT, 0);
         this.shader.disable();
         this.vao.unbind();
