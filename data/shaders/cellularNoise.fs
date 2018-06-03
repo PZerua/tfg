@@ -59,5 +59,7 @@ void main() {
         amplitude /= 2.0;
     }
 
+    //f = f * f * f;
+
     fragColor = vec4(f, f, f, 1.0);
 }

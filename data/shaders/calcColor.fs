@@ -25,14 +25,11 @@ void main (void)
 
 	vec3 color;
 
-	if (f < 0.20) {
-		color = seaColor;
-	}
-    else if (f >= 0.20 && f < 0.22) {
-        color = mix(seaColor, shoreColor, map(f, 0.20, 0.22, 0.0, 1.0));
+    if (f < 0.20) {
+        color = mix(vec3(0.0, 0.0, 0.0), seaColor, map(f, 0.0, 0.20, 0.0, 1.0));
     }
-	else if (f >= 0.22 && f < 0.30) {
-		color = mix(shoreColor, fieldColor, map(f, 0.25, 0.30, 0.0, 1.0));
+	else if (f >= 0.20 && f < 0.30) {
+		color = mix(shoreColor, fieldColor, map(f, 0.20, 0.30, 0.0, 1.0));
 	}
     else if (f >= 0.30  && f <= 0.5) {
         color = fieldColor;

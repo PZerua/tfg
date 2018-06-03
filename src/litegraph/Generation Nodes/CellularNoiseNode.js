@@ -1,5 +1,5 @@
 //node constructor class
-function PerlinNoiseNode() {
+function CellularNoiseNode() {
 
     this.addInput("Size", "number");
     this.addInput("Amplitude", "number");
@@ -8,7 +8,6 @@ function PerlinNoiseNode() {
     this.addInput("Height Scale", "number");
     this.addOutput("Heightmap");
 
-    // The object to be exported
     this.heighmapOBJ = {
         heightmapTexture: undefined,
         normalsTexture: undefined,
@@ -19,12 +18,12 @@ function PerlinNoiseNode() {
 }
 
 //name to show
-PerlinNoiseNode.title = "Perlin Noise";
-PerlinNoiseNode.position = [10, 50];
-PerlinNoiseNode.size = [300, 50];
+CellularNoiseNode.title = "Cellular Noise";
+CellularNoiseNode.position = [10, 50];
+CellularNoiseNode.size = [300, 50];
 
 //function to call when the node is executed
-PerlinNoiseNode.prototype.onExecute = function() {
+CellularNoiseNode.prototype.onExecute = function() {
 
     // Receive size
     this.heighmapOBJ.size = this.getInputData(0);
@@ -63,7 +62,7 @@ PerlinNoiseNode.prototype.onExecute = function() {
     // Create texture to be filled by the framebuffer
     this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // Create framebuffer providing the texture and a custom shader
-    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture.textureId, "perlinNoise", setHeightmapUniformsCallback);
+    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "cellularNoise", setHeightmapUniformsCallback);
 
     this.fboHeightmap.render();
 
@@ -76,4 +75,4 @@ PerlinNoiseNode.prototype.onExecute = function() {
 }
 
 //register in the system
-LiteGraph.registerNodeType("heightmap/perlinNoise", PerlinNoiseNode);
+LiteGraph.registerNodeType("heightmap/cellularNoise", CellularNoiseNode);

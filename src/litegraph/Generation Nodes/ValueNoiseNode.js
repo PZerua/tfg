@@ -1,5 +1,5 @@
 //node constructor class
-function CellularNoiseNode() {
+function ValueNoiseNode() {
 
     this.addInput("Size", "number");
     this.addInput("Amplitude", "number");
@@ -18,12 +18,12 @@ function CellularNoiseNode() {
 }
 
 //name to show
-CellularNoiseNode.title = "Cellular Noise";
-CellularNoiseNode.position = [10, 50];
-CellularNoiseNode.size = [300, 50];
+ValueNoiseNode.title = "Value Noise";
+ValueNoiseNode.position = [10, 50];
+ValueNoiseNode.size = [300, 50];
 
 //function to call when the node is executed
-CellularNoiseNode.prototype.onExecute = function() {
+ValueNoiseNode.prototype.onExecute = function() {
 
     // Receive size
     this.heighmapOBJ.size = this.getInputData(0);
@@ -62,17 +62,10 @@ CellularNoiseNode.prototype.onExecute = function() {
     // Create texture to be filled by the framebuffer
     this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // Create framebuffer providing the texture and a custom shader
-    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture.textureId, "cellularNoise", setHeightmapUniformsCallback);
-
-    this.fboHeightmap.render();
-
-    // Display texture in editor
-    var img = this.fboHeightmap.toImage();
-    var htmlImg = document.getElementById("heightmapTex");
-    htmlImg.src = img.src;
+    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "valueNoise", setHeightmapUniformsCallback);
 
     this.setOutputData(0, this.heighmapOBJ);
 }
 
 //register in the system
-LiteGraph.registerNodeType("heightmap/cellularNoise", CellularNoiseNode);
+LiteGraph.registerNodeType("heightmap/valueNoise", ValueNoiseNode);
