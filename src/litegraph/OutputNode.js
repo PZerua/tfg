@@ -49,13 +49,19 @@ OutputNode.prototype.onExecute = function() {
 
     this.fboNormals.render();
 
-    // --- Create normal map and save it in the provided texture ---
-    // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    // Create framebuffer providing the texture and a custom shader
-    this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "calcColor", setColorUniformsCallback);
+    // Only calculate default color if no color is defined
+    if (this.heighmapOBJ.colorTexture === undefined) {
+        // --- Create normal map and save it in the provided texture ---
+        // Create texture to be filled by the framebuffer
+        this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "calcColor", setColorUniformsCallback);
 
-    this.fboColor.render();
+        this.fboColor.render();
+    }
+    else {
+        this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture);
+    }
 
     // Create framebuffer providing the texture and a custom shader
     this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture);
