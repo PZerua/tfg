@@ -34,11 +34,11 @@ void main (void)
     float f = dot(normal, vec3(0, 1, 0));
 
     vec3 color;
-    if (f < 0.24) {
-        color = mix(vec3(0.0, 0.0, 0.0), u_color0, map(f, 0.0, 0.24, 0.0, 1.0));
+    if (f < 0.22) {
+        color = mix(vec3(0.0, 0.0, 0.0), u_color0, map(f, 0.0, 0.22, 0.0, 1.0));
     }
-    else if (f >= 0.24 && f < 0.25) {
-        color = mix(u_color0, u_color1, map(f, 0.24, 0.25, 0.0, 1.0));
+    else if (f >= 0.22 && f < 0.25) {
+        color = mix(u_color0, u_color1, map(f, 0.22, 0.25, 0.0, 1.0));
     }
     else if (f >= 0.25 && f < 0.49) {
         color = u_color1;
