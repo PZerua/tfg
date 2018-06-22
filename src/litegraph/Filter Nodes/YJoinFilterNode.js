@@ -7,6 +7,7 @@ function YJoinFilterNode() {
     this.addInput("Threshold");
     this.addOutput("Heightmap");
 
+    this.size[1] += 128.0;
 }
 
 //name to show
@@ -70,7 +71,17 @@ YJoinFilterNode.prototype.onExecute = function() {
 
     this.heightmapOBJ_0.heightmapTexture = filterTexture;
 
+    // To display heightmap texture in node
+    this.img = this.fboFilter.toImage();
+
     this.setOutputData(0, this.heightmapOBJ_0);
+}
+
+YJoinFilterNode.prototype.onDrawBackground = function(ctx)
+{
+    if(this.img) {
+        ctx.drawImage(this.img, 0, this.inputs.length * 16.0, this.size[0], this.size[1] - this.inputs.length * 16.0);
+    }
 }
 
 //register in the system
