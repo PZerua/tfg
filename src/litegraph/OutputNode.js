@@ -49,7 +49,6 @@ OutputNode.prototype.onExecute = function() {
 
     // Only calculate default color if no color is defined
     if (this.heighmapOBJ.colorTexture === undefined) {
-        // --- Create normal map and save it in the provided texture ---
         // Create texture to be filled by the framebuffer
         this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
         // Create framebuffer providing the texture and a custom shader

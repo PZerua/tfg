@@ -11,10 +11,10 @@ uniform sampler2D u_heightmapTexture1;
 
 void main (void)
 {
-    float f0 = texture(u_heightmapTexture0, oUvs).r;
-    float f1 = texture(u_heightmapTexture1, oUvs).r;
+    vec3 f0 = texture(u_heightmapTexture0, oUvs).rgb;
+    vec3 f1 = texture(u_heightmapTexture1, oUvs).rgb;
 
-    float f = min(f0, f1);
+    vec3 f = min(f0, f1);
 
-    fragColor = vec4(vec3(f), 1.0);
+    fragColor = vec4(f, 1.0);
 }

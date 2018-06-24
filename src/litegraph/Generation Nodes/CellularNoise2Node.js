@@ -99,7 +99,7 @@ CellularNoise2Node.prototype.onDrawBackground = function(ctx)
     var height = this.inputs.length * 15 + 5
     ctx.fillStyle = "rgb(30,30,30)";
     ctx.fillRect(0, height, this.size[0] + 1, this.size[1] - height);
-    
+
     if(this.img) {
         ctx.drawImage(this.img, (this.size[0] - 128) / 2.0, height, 128, this.size[1] - height);
     }

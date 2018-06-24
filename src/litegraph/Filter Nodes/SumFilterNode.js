@@ -53,6 +53,26 @@ SumFilterNode.prototype.onExecute = function() {
         self.fboFilter.shader.setFloat("u_threshold", threshold);
     }
 
+    var setFilterColorUniformsCallback = function() {
+        self.fboFilter.shader.setInt("u_heightmapTexture0", 0);
+        gl.activeTexture(gl.TEXTURE0);
+        if (self.heightmapOBJ_0.colorTexture === undefined) {
+            self.heightmapOBJ_0.heightmapTexture.bind();
+        } else {
+            self.heightmapOBJ_0.colorTexture.bind();
+        }
+
+        self.fboFilter.shader.setInt("u_heightmapTexture1", 1);
+        gl.activeTexture(gl.TEXTURE1);
+        if (self.heightmapOBJ_1.colorTexture === undefined) {
+            self.heightmapOBJ_1.heightmapTexture.bind();
+        } else {
+            self.heightmapOBJ_1.colorTexture.bind();
+        }
+
+        self.fboFilter.shader.setFloat("u_threshold", threshold);
+    }
+
     // Create texture to be filled by the framebuffer
     var filterTexture = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // Create framebuffer providing the texture and a custom shader
@@ -60,7 +80,15 @@ SumFilterNode.prototype.onExecute = function() {
 
     this.fboFilter.render();
 
+    // Create texture to be filled by the framebuffer
+    var filterTextureColor = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    // Create framebuffer providing the texture and a custom shader
+    this.fboFilterColor = new FrameBuffer(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, filterTextureColor, "sumFilter", setFilterColorUniformsCallback);
+
+    this.fboFilterColor.render();
+
     this.heightmapOBJ_0.heightmapTexture = filterTexture;
+    this.heightmapOBJ_0.colorTexture = filterTextureColor;
 
     // To display heightmap texture in node
     this.img = this.fboFilter.toImage();

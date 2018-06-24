@@ -13,10 +13,10 @@ uniform float u_threshold;
 
 void main (void)
 {
-    float f0 = texture(u_heightmapTexture0, oUvs).r;
-    float f1 = texture(u_heightmapTexture1, oUvs).r;
+    vec3 f0 = texture(u_heightmapTexture0, oUvs).rgb;
+    vec3 f1 = texture(u_heightmapTexture1, oUvs).rgb;
 
-    float f = mix(f0, f1, u_threshold);
+    vec3 f = mix(f0, f1, u_threshold);
 
-    fragColor = vec4(vec3(f), 1.0);
+    fragColor = vec4(f, 1.0);
 }

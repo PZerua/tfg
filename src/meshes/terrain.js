@@ -14,7 +14,6 @@ function Terrain(scale) {
 
     this.buildTerrain = function() {
 
-        // Get heightmap from output node TODO: This is probably not the best way to do it
         var outputNode = Editor.graph.findNodesByTitle("Output")[0];
 
         if (outputNode) {
