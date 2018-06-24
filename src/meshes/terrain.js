@@ -18,7 +18,7 @@ function Terrain(scale) {
         var outputNode = Editor.graph.findNodesByTitle("Output")[0];
 
         if (outputNode) {
-            var heightmapOBJ = outputNode.getOutputData(0);
+            var heightmapOBJ = outputNode.heighmapOBJ;
         } else {
             console.error("No Output node in graph");
             return false;

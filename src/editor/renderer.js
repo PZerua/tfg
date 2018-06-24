@@ -68,6 +68,7 @@ function Renderer(canvas) {
 	Shader.registerShader("common", "sumFilter");
 	Shader.registerShader("common", "subFilter");
 	Shader.registerShader("common", "lerpMaskFilter");
+	Shader.registerShader("common", "heightColor");
 	Shader.registerShader("common", "slopeColor");
 	Shader.precompileShaders(precompileShadersCallback);
 

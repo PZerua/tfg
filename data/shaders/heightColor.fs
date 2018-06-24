@@ -21,20 +21,8 @@ float map(float value, float inMin, float inMax, float outMin, float outMax) {
 
 void main (void)
 {
-    vec2 dU = vec2(1.0 / u_size, 0.0);
-    vec2 dV = vec2(0.0, 1.0 / u_size);
 
-    float hL = u_heightScale * texture(u_heightmapTexture, oUvs - dU).r;
-    float hR = u_heightScale * texture(u_heightmapTexture, oUvs + dU).r;
-
-    float hU = u_heightScale * texture(u_heightmapTexture, oUvs - dV).r;
-    float hD = u_heightScale * texture(u_heightmapTexture, oUvs + dV).r;
-
-    vec3 normal = normalize(vec3(hL - hR, 2.0, hU - hD));
-
-    vec3 upNorm = normalize(vec3(0, 1, 0));
-
-    float f = dot(normal, upNorm);
+    float f = texture(u_heightmapTexture, oUvs).r;
 
     vec3 color;
     if (f < 0.25 - u_dispersion) {

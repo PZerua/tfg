@@ -1,5 +1,5 @@
 //node constructor class
-function SlopeColorNode() {
+function HeightColorNode() {
 
     this.addInput("Heightmap");
     this.addInput("Color 0.25","hcolor");
@@ -13,10 +13,10 @@ function SlopeColorNode() {
 }
 
 //name to show
-SlopeColorNode.title = "Slope Color";
+HeightColorNode.title = "Height Color";
 
 //function to call when the node is executed
-SlopeColorNode.prototype.onExecute = function() {
+HeightColorNode.prototype.onExecute = function() {
 
     // Receive heightmap Obj and copy its contents (I don't want to modify it being a reference, bad things can happen)
     var heightmapOBJ = this.getInputData(0);
@@ -28,19 +28,19 @@ SlopeColorNode.prototype.onExecute = function() {
 
     var color0 = this.getInputData(1);
     if (color0 === undefined)
-        color0 = [1.0, 1.0, 1.0];
+        color0 = [0.227, 0.525, 0.756];
 
     var color1 = this.getInputData(2);
     if (color1 === undefined)
-        color1 = [1.0, 1.0, 1.0];
+        color1 = [0.925, 0.839, 0.603];
 
     var color2 = this.getInputData(3);
     if (color2 === undefined)
-        color2 = [1.0, 1.0, 1.0];
+        color2 = [0.403, 0.615, 0.392];
 
     var color3 = this.getInputData(4);
     if (color3 === undefined)
-        color3 = [1.0, 1.0, 1.0];
+        color3 = [0.909, 0.964, 0.956];
 
     var dispersion = this.getInputData(5);
     if (dispersion === undefined)
@@ -70,7 +70,7 @@ SlopeColorNode.prototype.onExecute = function() {
     // Create texture to be filled by the framebuffer
     this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // Create framebuffer providing the texture and a custom shader
-    this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "slopeColor", setFilterUniformsCallback);
+    this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "heightColor", setFilterUniformsCallback);
 
     this.fboColor.render();
 
@@ -80,7 +80,7 @@ SlopeColorNode.prototype.onExecute = function() {
     this.setOutputData(0, this.heighmapOBJ);
 }
 
-SlopeColorNode.prototype.onDrawBackground = function(ctx)
+HeightColorNode.prototype.onDrawBackground = function(ctx)
 {
     var height = this.inputs.length * 15 + 5
     ctx.fillStyle = "rgb(30,30,30)";
@@ -92,4 +92,4 @@ SlopeColorNode.prototype.onDrawBackground = function(ctx)
 }
 
 //register in the system
-LiteGraph.registerNodeType("heightmap/slopeColor", SlopeColorNode);
+LiteGraph.registerNodeType("heightmap/heightColor", HeightColorNode);

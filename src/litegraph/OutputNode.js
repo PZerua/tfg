@@ -2,8 +2,6 @@
 function OutputNode() {
 
     this.addInput("Heightmap");
-    this.addOutput("Heightmap");
-
 }
 
 //name to show
@@ -80,8 +78,6 @@ OutputNode.prototype.onExecute = function() {
     img = this.fboColor.toImage();
     htmlImg = document.getElementById("colorTex");
     htmlImg.src = img.src;
-
-    this.setOutputData(0, this.heighmapOBJ);
 }
 
 //register in the system
