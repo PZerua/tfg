@@ -61,7 +61,6 @@ LerpMaskFilterNode.prototype.onExecute = function() {
         self.heightmapOBJ_2.heightmapTexture.bind();
     }
 
-    // --- Create normal map and save it in the provided texture ---
     // Create texture to be filled by the framebuffer
     var filterTexture = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
     // Create framebuffer providing the texture and a custom shader
@@ -80,7 +79,10 @@ LerpMaskFilterNode.prototype.onExecute = function() {
 LerpMaskFilterNode.prototype.onDrawBackground = function(ctx)
 {
     if(this.img) {
-        ctx.drawImage(this.img, 0, this.inputs.length * 16.0, this.size[0], this.size[1] - this.inputs.length * 16.0);
+        var height = this.inputs.length * 15 + 5
+        ctx.fillStyle = "rgb(30,30,30)";
+        ctx.fillRect(0, height, this.size[0] + 1, this.size[1] - height);
+        ctx.drawImage(this.img, (this.size[0] - 128) / 2.0, height, 128, this.size[1] - height);
     }
 }
 

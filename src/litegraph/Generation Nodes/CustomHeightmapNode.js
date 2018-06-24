@@ -67,7 +67,10 @@ CustomHeightmapNode.prototype.onExecute = function() {
 CustomHeightmapNode.prototype.onDrawBackground = function(ctx)
 {
     if(this.img) {
-        ctx.drawImage(this.img, 0, this.inputs.length * 16.0, this.size[0], this.size[1] - this.inputs.length * 16.0);
+        var height = this.inputs.length * 15 + 5
+        ctx.fillStyle = "rgb(30,30,30)";
+        ctx.fillRect(0, height, this.size[0] + 1, this.size[1] - height);
+        ctx.drawImage(this.img, (this.size[0] - 128) / 2.0, height, 128, this.size[1] - height);
     }
 }
 
