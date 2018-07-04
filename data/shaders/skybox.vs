@@ -12,5 +12,6 @@ out vec3 oUvs;
 void main(void)
 {
     oUvs = aVertex;
-    gl_Position = u_projection * u_view * vec4( aVertex, 1.0 );
+    vec4 pos = u_projection * u_view * vec4( aVertex, 1.0 );
+    gl_Position = pos.xyww;
 }

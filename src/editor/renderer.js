@@ -86,12 +86,12 @@ Renderer.prototype.render = function(camera) {
 	gl.viewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	gl.depthMask(false);
-	this.skybox.render(camera);
-	gl.depthMask(true);
-
 	this.axes.render(camera);
 	this.terrain.render(camera);
+
+	gl.depthFunc(gl.LEQUAL);
+	this.skybox.render(camera);
+	gl.depthFunc(gl.LESS);
 }
 
 Renderer.prototype.buildTerrain = function() {
