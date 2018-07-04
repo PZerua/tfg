@@ -29,6 +29,19 @@ CellularNoise2Node.title = "Cellular Noise Sub";
 //function to call when the node is executed
 CellularNoise2Node.prototype.onExecute = function() {
 
+    var inputsValues = new Float32Array(this.inputs.length);
+    for (var i = 0; i < this.inputs.length; i++) {
+        inputsValues[i] = this.getInputData(i);
+    }
+
+    var hash = Math.createHash(inputsValues);
+
+    if (this.hash && this.hash == hash) {
+        return;
+    } else {
+        this.hash = hash;
+    }
+
     // Receive size
     this.heighmapOBJ.size = this.getInputData(0);
     if (this.heighmapOBJ.size === undefined)
@@ -82,7 +95,7 @@ CellularNoise2Node.prototype.onExecute = function() {
 
     // --- Create heightmap and save it in the provided texture ---
     // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
     // Create framebuffer providing the texture and a custom shader
     this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "cellularNoise2", setHeightmapUniformsCallback);
 

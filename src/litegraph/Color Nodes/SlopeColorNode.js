@@ -5,7 +5,7 @@ function SlopeColorNode() {
     this.addInput("Color 0.25","hcolor");
     this.addInput("Color 0.50","hcolor");
     this.addInput("Color 0.75","hcolor");
-    this.addInput("Color 0.10","hcolor");
+    this.addInput("Color 1.00","hcolor");
     this.addInput("Dispersion","number");
     this.addOutput("Heightmap");
 
