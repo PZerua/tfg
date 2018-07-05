@@ -50,6 +50,7 @@ CustomHeightmapNode.prototype.onExecute = function() {
     hash += image.src;
 
     if (this.hash && this.hash == hash) {
+        this.setOutputData(0, this.heighmapOBJ);
         return;
     } else {
         this.hash = hash;

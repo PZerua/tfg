@@ -29,14 +29,24 @@ CellularNoise2Node.title = "Cellular Noise Sub";
 //function to call when the node is executed
 CellularNoise2Node.prototype.onExecute = function() {
 
-    var inputsValues = new Float32Array(this.inputs.length);
+    var inputsValues = [];
     for (var i = 0; i < this.inputs.length; i++) {
-        inputsValues[i] = this.getInputData(i);
+        var input = this.getInputData(i);
+
+        if (input === undefined) {
+            inputsValues[i] = 0;
+        } else
+        if (typeof input !== "number") {
+            inputsValues[i] = input.heightmapTexture.hash + (input.colorTexture ? input.colorTexture.hash : "");
+        } else {
+            inputsValues[i] = input;
+        }
     }
 
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
+        this.setOutputData(0, this.heighmapOBJ);
         return;
     } else {
         this.hash = hash;

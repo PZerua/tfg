@@ -3,14 +3,13 @@ function Cubemap(name) {
     this.name = name;
     this.shader;
     this.vertices = [];
+    this.indices = [];
     this.texture = new CubemapTexture(512, 512, name);
 
     this.vao;
     this.vbo;
 
     this.isReady = false;
-
-    var self = this;
 
     this.createCube = function() {
 
@@ -21,69 +20,63 @@ function Cubemap(name) {
         }
 
         // RIGHT
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
-        addVertex(self.vertices,  1.0, -1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0, -1.0);
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
+        addVertex(this.vertices,  1.0, -1.0, -1.0);
+        addVertex(this.vertices,  1.0, -1.0,  1.0);
+        addVertex(this.vertices,  1.0,  1.0,  1.0);
+        addVertex(this.vertices,  1.0,  1.0, -1.0);
         // LEFT
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
-        addVertex(self.vertices, -1.0, -1.0, -1.0);
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
-        addVertex(self.vertices, -1.0,  1.0,  1.0);
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
+        addVertex(this.vertices, -1.0,  1.0,  1.0);
+        addVertex(this.vertices, -1.0, -1.0,  1.0);
+        addVertex(this.vertices, -1.0, -1.0, -1.0);
+        addVertex(this.vertices, -1.0,  1.0, -1.0);
         // TOP
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
-        addVertex(self.vertices,  1.0,  1.0, -1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices, -1.0,  1.0,  1.0);
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
+        addVertex(this.vertices, -1.0,  1.0,  1.0);
+        addVertex(this.vertices, -1.0,  1.0, -1.0);
+        addVertex(this.vertices,  1.0,  1.0, -1.0);
+        addVertex(this.vertices,  1.0,  1.0,  1.0);
         // BOTTOM
-        addVertex(self.vertices, -1.0, -1.0, -1.0);
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
-        addVertex(self.vertices,  1.0, -1.0,  1.0);
+        addVertex(this.vertices, -1.0, -1.0, -1.0);
+        addVertex(this.vertices, -1.0, -1.0,  1.0);
+        addVertex(this.vertices,  1.0, -1.0,  1.0);
+        addVertex(this.vertices,  1.0, -1.0, -1.0);
         // FRONT
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
-        addVertex(self.vertices, -1.0, -1.0, -1.0);
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
-        addVertex(self.vertices,  1.0, -1.0, -1.0);
-        addVertex(self.vertices,  1.0,  1.0, -1.0);
-        addVertex(self.vertices, -1.0,  1.0, -1.0);
+        addVertex(this.vertices, -1.0,  1.0, -1.0);
+        addVertex(this.vertices, -1.0, -1.0, -1.0);
+        addVertex(this.vertices,  1.0, -1.0, -1.0);
+        addVertex(this.vertices,  1.0,  1.0, -1.0);
         // BACK
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
-        addVertex(self.vertices, -1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0,  1.0,  1.0);
-        addVertex(self.vertices,  1.0, -1.0,  1.0);
-        addVertex(self.vertices, -1.0, -1.0,  1.0);
+        addVertex(this.vertices,  1.0,  1.0,  1.0);
+        addVertex(this.vertices,  1.0, -1.0,  1.0);
+        addVertex(this.vertices, -1.0, -1.0,  1.0);
+        addVertex(this.vertices, -1.0,  1.0,  1.0);
+
+        var f = 0;
+        for (var i = 0; i < 6; i++) {
+            this.indices = this.indices.concat([f + 0, f + 1, f + 3, f + 3, f + 1, f + 2]);
+            f += 4;
+        }
     }
 
     this.setupCubemap = function() {
 
-        self.createCube();
+        this.createCube();
 
         // -- Setup buffers --
-        self.vao = new VertexArray();
+        this.vao = new VertexArray();
 
         // VertexBuffer to store vertex positions
-        self.vbo = new VertexBuffer(new Float32Array(self.vertices), gl.STATIC_DRAW);
+        this.vbo = new VertexBuffer(new Float32Array(this.vertices), gl.STATIC_DRAW);
 
         // The attribute position in the shader
-        gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(0);
 
         // IndexBuffer to store vertex indices
-        //self.ebo = new IndexBuffer(new Uint16Array(self.indices), gl.STATIC_DRAW);
+        this.ebo = new IndexBuffer(new Uint8Array(this.indices), gl.STATIC_DRAW);
 
-        self.vao.unbind();
+        this.vao.unbind();
 
-        self.isReady = true;
+        this.isReady = true;
     }
 
     this.shader = Shader.getShader("skybox");
@@ -91,9 +84,7 @@ function Cubemap(name) {
 
     this.render = function(camera) {
         if (this.isReady && this.texture.isReady) {
-            this.vao.bind();
             this.shader.enable();
-
             this.shader.setMatrix4("u_view", camera.view.clearTranslation());
             this.shader.setMatrix4("u_projection", camera.projection);
 
@@ -101,9 +92,11 @@ function Cubemap(name) {
             gl.activeTexture(gl.TEXTURE0);
             this.texture.bind();
 
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
-            this.shader.disable();
+            this.vao.bind();
+            gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_BYTE, 0);
             this.vao.unbind();
+
+            this.shader.disable();
         }
     }
 }

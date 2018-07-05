@@ -32,11 +32,16 @@ Math.toHex = function(value) {
      return hash;
 }
 
-Math.createHash = function(numbers) {
+Math.createHash = function(values) {
     var hash = "";
-    for (var i = 0; i < numbers.length; i++) {
+    for (var i = 0; i < values.length; i++) {
+
+        if (typeof values[i] === "string") {
+            hash += values[i];
+            continue;
+        }
         // Check if number has decimal values
-        var numStr = (numbers[i] + "").split(".")
+        var numStr = (values[i] + "").split(".")
         // True if it has decimals and the decimal is different to 0
         var isValidDecimal = numStr.length == 2 && numStr[1] != "0"
 
