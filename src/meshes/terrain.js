@@ -14,21 +14,6 @@ function Terrain(scale) {
 
     this.buildTerrain = function() {
 
-        var outputNode = Editor.graph.findNodesByTitle("Output")[0];
-
-        if (outputNode) {
-            var heightmapOBJ = outputNode.heighmapOBJ;
-        } else {
-            console.error("No Output node in graph");
-            return false;
-        }
-
-        self.heightmapTexture = heightmapOBJ.heightmapTexture;
-        self.normalsTexture = heightmapOBJ.normalsTexture;
-        self.colorTexture = heightmapOBJ.colorTexture;
-        self.size = heightmapOBJ.size;
-        self.heightmapHeightScale = heightmapOBJ.heightScale;
-
         // Instanciate buffers
         self.vertices = new Float32Array(self.size * self.size * 3);
         self.uvs = new Float32Array(self.size * self.size * 2);
@@ -111,15 +96,31 @@ function Terrain(scale) {
                 self.indices[counter++] = ((col - 1) + (row + 1) * self.size);
         	}
     	}
-
-        return true;
     }
 
     this.setupTerrain = function() {
 
-        if (!self.buildTerrain()) {
+        var outputNode = Editor.graph.findNodesByTitle("Output")[0];
+
+        if (outputNode) {
+            var heightmapOBJ = outputNode.heighmapOBJ;
+        } else {
+            console.error("No Output node in graph");
+            return false;
+        }
+
+        self.heightmapTexture = heightmapOBJ.heightmapTexture;
+        self.normalsTexture = heightmapOBJ.normalsTexture;
+        self.colorTexture = heightmapOBJ.colorTexture;
+        self.heightmapHeightScale = heightmapOBJ.heightScale;
+
+        // Do not recalculate vertex data if the size is the same (only textures change)
+        if (self.size === heightmapOBJ.size) {
             return;
         }
+
+        self.size = heightmapOBJ.size;
+        self.buildTerrain();
 
         // -- Setup buffers --
         self.vao = new VertexArray();
