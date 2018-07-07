@@ -62,26 +62,43 @@ OutputNode.prototype.onExecute = function() {
         self.fboColor.shader.setFloat("u_heightScale", self.heighmapOBJ.heightScale);
     }
 
-    // --- Create normal map and save it in the provided texture ---
-    // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.normalsTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
-    // Create framebuffer providing the texture and a custom shader
-    this.fboNormals = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.normalsTexture, "calcNormals", setNormalsUniformsCallback);
+    if (!this.normalsTexture) {
+        // --- Create normal map and save it in the provided texture ---
+        // Create texture to be filled by the framebuffer
+        this.normalsTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboNormals = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.normalsTexture, "calcNormals", setNormalsUniformsCallback);
+    } else {
+        this.fboNormals.setUniformsCallback(setNormalsUniformsCallback)
+    }
 
     this.fboNormals.render();
+    this.heighmapOBJ.normalsTexture = this.normalsTexture
 
-    // Only calculate default color if no color is defined
-    if (this.heighmapOBJ.colorTexture === undefined) {
+    if (!this.colorTexture) {
+
         // Create texture to be filled by the framebuffer
-        this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        this.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.colorTexture);
+
+    } else {
+        this.colorTexture.setHash(this.hash);
+    }
+
+    if (!this.heighmapOBJ.colorTexture) {
+
         // Create framebuffer providing the texture and a custom shader
-        this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "calcColor", setColorUniformsCallback);
+        this.fboColor.setShader("calcColor");
+        this.fboColor.setUniformsCallback(setColorUniformsCallback);
 
         this.fboColor.render();
+
+        this.heighmapOBJ.colorTexture = this.colorTexture
+
+    } else {
+        this.fboColor.setTexture(this.heighmapOBJ.colorTexture);
     }
-    else {
-        this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture);
-    }
+
 
     // Create framebuffer providing the texture and a custom shader
     this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture);

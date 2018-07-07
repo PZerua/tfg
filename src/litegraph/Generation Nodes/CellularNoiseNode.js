@@ -43,6 +43,9 @@ CellularNoiseNode.prototype.onExecute = function() {
         }
     }
 
+    // Force to reevaluate when changing between modes
+    inputsValues.push(Editor.fastEditMode ? 1 : 0);
+
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
@@ -129,7 +132,7 @@ CellularNoiseNode.prototype.onDrawBackground = function(ctx)
     ctx.fillStyle = "rgb(30,30,30)";
     ctx.fillRect(0, height, this.size[0] + 1, this.size[1] - height);
 
-    if(this.img) {
+    if(this.img && !Editor.fastEditMode) {
         ctx.drawImage(this.img, (this.size[0] - 128) / 2.0, height, 128, this.size[1] - height);
     }
 }

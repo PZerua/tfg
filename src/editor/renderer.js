@@ -27,6 +27,10 @@ function Renderer(canvas) {
 		// Run first step
 		Editor.graph.runStep()
 
+		if (Editor.fastEditMode) {
+			Editor.graph.start()
+		}
+
 		this.axes = new OriginAxes();
 		// Size more than 256 exceeds the max index value: 2^16
 		this.terrain = new Terrain(2);
@@ -83,7 +87,9 @@ Renderer.prototype.render = function(camera) {
 		return;
 	}
 
-	//this.terrain.setupTerrain();
+	if (Editor.fastEditMode) {
+		this.terrain.setupTerrain();
+	}
 
 	gl.viewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

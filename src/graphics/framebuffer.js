@@ -66,6 +66,17 @@ class FrameBuffer {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
+    setShader(shaderName) {
+        this.shader = Shader.getShader(shaderName);
+    }
+
+    setTexture(texture) {
+        this.texture = texture
+        this.bind();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texture.textureId, 0);
+        this.unbind();
+    }
+
     toImage() {
 
         this.bind();

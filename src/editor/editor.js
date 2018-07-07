@@ -53,6 +53,31 @@ var Editor = {
 			self.centerCamera()
 		};
 
+		this.fastEditButton = document.getElementById("fastEditButton")
+		this.fastEditButton.onclick = function() {
+			if (Editor.fastEditMode) {
+				Editor.fastEditMode = false;
+				Editor.graph.stop();
+				Editor.graph.runStep();
+				self.fastEditButton.textContent  = "Fast Edit Mode: OFF";
+
+				// Display textures
+				document.getElementById("heightmapTex").style.display = 'block';
+				document.getElementById("normalsTex").style.display = 'block';
+				document.getElementById("colorTex").style.display = 'block';
+
+			} else {
+				Editor.fastEditMode = true;
+				Editor.graph.start();
+				self.fastEditButton.textContent  = "Fast Edit Mode: ON";
+
+				// Hide textures
+				document.getElementById("heightmapTex").style.display = 'none';
+				document.getElementById("normalsTex").style.display = 'none';
+				document.getElementById("colorTex").style.display = 'none';
+			}
+		};
+
 		var saveButton = document.getElementById("saveButton")
 		saveButton.onclick = function() {
 			var a = document.createElement('a');
@@ -66,6 +91,9 @@ var Editor = {
 		loadFile.addEventListener('change', function() {
 			var url = window.URL.createObjectURL(loadFile.files[0]);
 			self.graph.load(url);
+			if (Editor.fastEditMode) {
+				self.fastEditButton.click();
+			}
 		});
 
 		// Get file data on drop
