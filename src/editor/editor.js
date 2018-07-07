@@ -9,6 +9,7 @@ var Editor = {
 	currentKeys: {},
 	stats: new Stats(),
 	graph : new LGraph(),
+	fastEditMode: false,
 	init : function() {
 
 		var container = document.getElementById("container")
@@ -41,8 +42,8 @@ var Editor = {
 			}
 		};
 
-		var runStepButton = document.getElementById("runStepButton")
-		runStepButton.onclick = function() {
+		this.runStepButton = document.getElementById("runStepButton")
+		this.runStepButton.onclick = function() {
 			self.graph.runStep();
 			self.renderer.buildTerrain();
 		};

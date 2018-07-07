@@ -68,8 +68,11 @@ CustomHeightmapNode.prototype.onExecute = function() {
     // Create texture to be filled by the framebuffer
     this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image, this.hash);
 
-    // To display heightmap texture in node
-    this.img = this.fboHeightmap.toImage();
+    // Only generate preview when fast edit is disabled
+    if (!Editor.fastEditMode) {
+        // To display heightmap texture in node
+        this.img = this.fboHeightmap.toImage();
+    }
 
     this.setOutputData(0, this.heighmapOBJ);
 }

@@ -103,16 +103,22 @@ CellularNoiseNode.prototype.onExecute = function() {
         self.fboHeightmap.shader.setFloat("u_yOffset", yOffset);
     }
 
-    // --- Create heightmap and save it in the provided texture ---
-    // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
-    // Create framebuffer providing the texture and a custom shader
-    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "cellularNoise", setHeightmapUniformsCallback);
+    if (!this.heighmapOBJ.heightmapTexture) {
+        // --- Create heightmap and save it in the provided texture ---
+        // Create texture to be filled by the framebuffer
+        this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "cellularNoise", setHeightmapUniformsCallback);
+    } else {
+        this.heighmapOBJ.heightmapTexture.setHash(this.hash);
+    }
 
     this.fboHeightmap.render();
 
-    // To display heightmap texture in node
-    this.img = this.fboHeightmap.toImage();
+    if (!Editor.fastEditMode) {
+        // To display heightmap texture in node
+        this.img = this.fboHeightmap.toImage();
+    }
 
     this.setOutputData(0, this.heighmapOBJ);
 }

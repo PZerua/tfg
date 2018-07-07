@@ -59,17 +59,26 @@ PowFilterNode.prototype.onExecute = function() {
         self.fboFilter.shader.setFloat("u_exponent", exponent);
     }
 
-    // Create texture to be filled by the framebuffer
-    var filterTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
-    // Create framebuffer providing the texture and a custom shader
-    this.fboFilter = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, filterTexture, "powFilter", setFilterUniformsCallback);
+    if (!this.filterTexture) {
+        // Create texture to be filled by the framebuffer
+        this.filterTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboFilter = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.filterTexture, "powFilter", setFilterUniformsCallback);
+    } else {
+        this.filterTexture.setHash(this.hash);
+    }
 
+    this.fboFilter.setUniformsCallback(setFilterUniformsCallback)
     this.fboFilter.render();
 
-    this.heighmapOBJ.heightmapTexture = filterTexture;
+    //this.heighmapOBJ.heightmapTexture.delete();
+    this.heighmapOBJ.heightmapTexture = this.filterTexture;
 
-    // To display heightmap texture in node
-    this.img = this.fboFilter.toImage();
+    // Only generate preview when fast edit is disabled
+    if (!Editor.fastEditMode) {
+        // To display heightmap texture in node
+        this.img = this.fboFilter.toImage();
+    }
 
     this.setOutputData(0, this.heighmapOBJ);
 }

@@ -109,6 +109,10 @@ function Terrain(scale) {
             return false;
         }
 
+        if (!heightmapOBJ) {
+            return;
+        }
+
         self.heightmapTexture = heightmapOBJ.heightmapTexture;
         self.normalsTexture = heightmapOBJ.normalsTexture;
         self.colorTexture = heightmapOBJ.colorTexture;
@@ -150,12 +154,19 @@ function Terrain(scale) {
         self.ebo = new IndexBuffer(self.indices, gl.STATIC_DRAW);
 
         self.vao.unbind();
+
+        self.ready = true;
     }
 
     this.shader = Shader.getShader("terrain");
     this.setupTerrain();
 
     this.render = function(camera) {
+
+        if (!this.ready) {
+            return;
+        }
+
         this.vao.bind();
         this.shader.enable();
 

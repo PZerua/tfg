@@ -71,8 +71,11 @@ RemapFilterNode.prototype.onExecute = function() {
 
     this.fboFilter.render();
 
-    // To display heightmap texture in node
-    this.img = this.fboFilter.toImage();
+    // Only generate preview when fast edit is disabled
+    if (!Editor.fastEditMode) {
+        // To display heightmap texture in node
+        this.img = this.fboFilter.toImage();
+    }
 
     this.setOutputData(0, this.heighmapOBJ);
 }

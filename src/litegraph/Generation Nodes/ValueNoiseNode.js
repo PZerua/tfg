@@ -111,8 +111,11 @@ ValueNoiseNode.prototype.onExecute = function() {
 
     this.fboHeightmap.render();
 
-    // To display heightmap texture in node
-    this.img = this.fboHeightmap.toImage();
+    // Only generate preview when fast edit is disabled
+    if (!Editor.fastEditMode) {
+        // To display heightmap texture in node
+        this.img = this.fboHeightmap.toImage();
+    }
 
     this.setOutputData(0, this.heighmapOBJ);
 }

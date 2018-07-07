@@ -1,9 +1,9 @@
 class FrameBuffer {
 
-    constructor(width, height, texture, shaderName, setUniformsCallback) {
+    constructor(width, height, texture, shaderName, uniformsCallback) {
 
-        if (setUniformsCallback) {
-            this.setUniforms = setUniformsCallback;
+        if (uniformsCallback) {
+            this.setUniforms = uniformsCallback;
         } else {
             this.setUniforms = function() {}
         }
@@ -113,5 +113,13 @@ class FrameBuffer {
         this.vao.unbind();
         this.shader.disable();
         this.unbind();
+    }
+
+    setUniformsCallback(uniformsCallback) {
+        if (uniformsCallback) {
+            this.setUniforms = uniformsCallback;
+        } else {
+            this.setUniforms = function() {}
+        }
     }
 }

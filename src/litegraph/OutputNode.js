@@ -86,20 +86,22 @@ OutputNode.prototype.onExecute = function() {
     // Create framebuffer providing the texture and a custom shader
     this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture);
 
-    // Display heightmap texture in editor
-    var img = this.fboHeightmap.toImage();
-    var htmlImg = document.getElementById("heightmapTex");
-    htmlImg.src = img.src;
+    if (!Editor.fastEditMode) {
+        // Display heightmap texture in editor
+        var img = this.fboHeightmap.toImage();
+        var htmlImg = document.getElementById("heightmapTex");
+        htmlImg.src = img.src;
 
-    // Display normal texture in editor
-    img = this.fboNormals.toImage();
-    htmlImg = document.getElementById("normalsTex");
-    htmlImg.src = img.src;
+        // Display normal texture in editor
+        img = this.fboNormals.toImage();
+        htmlImg = document.getElementById("normalsTex");
+        htmlImg.src = img.src;
 
-    // Display color texture in editor
-    img = this.fboColor.toImage();
-    htmlImg = document.getElementById("colorTex");
-    htmlImg.src = img.src;
+        // Display color texture in editor
+        img = this.fboColor.toImage();
+        htmlImg = document.getElementById("colorTex");
+        htmlImg.src = img.src;
+    }
 }
 
 //register in the system
