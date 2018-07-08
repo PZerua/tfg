@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/litegraph.css">
+    <link rel="stylesheet" href="style/litegraph-editor.css">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
@@ -10,19 +11,19 @@
 </head>
 
 <body onload="Editor.init()">
-    <div id="main">
+    <div id="main" class="litegraph-editor">
         <div id="toolBar">
-            <button id="runStepButton" class="button">Run Step</button>
-            <button id="wireframeButton" class="button">Wireframe: OFF</button>
+            <button id="runStepButton" class="button">Calculate</button>
             <button id="centerCameraButton" class="button">Center Camera</button>
-            <button id="fastEditButton" class="button">Fast Edit Mode: OFF</button>
+            <button id="wireframeButton" class="button">Wireframe: OFF</button>
+            <button id="fastEditButton" class="button">Fast Edit: OFF</button>
             <button id="saveButton" class="button">Save</button>
             <button id="loadButton" onclick="document.getElementById('loadFile').click();" class="button">Load</button>
             <input id="loadFile" type="file" accept=".json" style="display: none;" />
 
         </div>
         <div id="container">
-            <canvas id="graphCanvas"></canvas>
+            <canvas id="graphCanvas" class="graphcanvas"></canvas>
             <canvas id="glCanvas"></canvas>
             <div id="textureContainer">
                 <img id="heightmapTex"></img>

@@ -12,10 +12,10 @@ var Editor = {
 	fastEditMode: false,
 	init : function() {
 
-		var container = document.getElementById("container")
-		this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-		this.stats.dom.style.position = "absolute";
-		container.appendChild( this.stats.dom );
+		// var container = document.getElementById("container")
+		// this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+		// this.stats.dom.style.position = "absolute";
+		// container.appendChild( this.stats.dom );
 
 		this.graphCanvas = new LGraphCanvas("#graphCanvas", this.graph);
 		this.graphCanvas.resize();
@@ -59,7 +59,7 @@ var Editor = {
 				Editor.fastEditMode = false;
 				Editor.graph.stop();
 				Editor.graph.runStep();
-				self.fastEditButton.textContent  = "Fast Edit Mode: OFF";
+				self.fastEditButton.textContent  = "Fast Edit: OFF";
 
 				// Display textures
 				document.getElementById("heightmapTex").style.display = 'block';
@@ -69,7 +69,7 @@ var Editor = {
 			} else {
 				Editor.fastEditMode = true;
 				Editor.graph.start();
-				self.fastEditButton.textContent  = "Fast Edit Mode: ON";
+				self.fastEditButton.textContent  = "Fast Edit: ON";
 
 				// Hide textures
 				document.getElementById("heightmapTex").style.display = 'none';
