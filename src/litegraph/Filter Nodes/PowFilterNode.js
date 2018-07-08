@@ -61,7 +61,7 @@ PowFilterNode.prototype.onExecute = function() {
 
     if (!this.filterTexture) {
         // Create texture to be filled by the framebuffer
-        this.filterTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        this.filterTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
         // Create framebuffer providing the texture and a custom shader
         this.fboFilter = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.filterTexture, "powFilter", setFilterUniformsCallback);
     } else {

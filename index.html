@@ -39,6 +39,9 @@
         console.error("There is no support for WebGL2");
     }
     else {
+        gl.getExtension('OES_texture_float');
+        gl.getExtension('OES_texture_float_linear');
+        gl.getExtension('EXT_color_buffer_float');
         console.log("WebGL2 context loaded");
     }
 

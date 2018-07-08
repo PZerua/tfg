@@ -96,7 +96,7 @@ HeightColorNode.prototype.onExecute = function() {
 
     // --- Create normal map and save it in the provided texture ---
     // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+    this.heighmapOBJ.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
     // Create framebuffer providing the texture and a custom shader
     this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.colorTexture, "heightColor", setFilterUniformsCallback);
 

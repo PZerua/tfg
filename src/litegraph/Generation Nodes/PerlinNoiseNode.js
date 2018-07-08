@@ -12,7 +12,7 @@ function PerlinNoiseNode() {
 
     this.addOutput("Heightmap");
 
-    this.heighmapOBJ = {
+    this.heightmapOBJ = {
         heightmapTexture: undefined,
         normalsTexture: undefined,
         colorTexture: undefined,
@@ -49,7 +49,7 @@ PerlinNoiseNode.prototype.onExecute = function() {
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
-        this.setOutputData(0, this.heighmapOBJ);
+        this.setOutputData(0, this.heightmapOBJ);
         return;
     } else {
         this.hash = hash;
@@ -61,9 +61,9 @@ PerlinNoiseNode.prototype.onExecute = function() {
     }
 
     // Receive size
-    this.heighmapOBJ.size = this.getInputData(0);
-    if (this.heighmapOBJ.size === undefined)
-        this.heighmapOBJ.size = 1024;
+    this.heightmapOBJ.size = this.getInputData(0);
+    if (this.heightmapOBJ.size === undefined)
+        this.heightmapOBJ.size = 1024;
 
     // Receive amplitude
     var amplitude = this.getInputData(1);
@@ -81,9 +81,9 @@ PerlinNoiseNode.prototype.onExecute = function() {
         octaves = 8;
 
     // Receive mesh height scale
-    this.heighmapOBJ.heightScale = this.getInputData(4);
-    if (this.heighmapOBJ.heightScale === undefined)
-        this.heighmapOBJ.heightScale = 200;
+    this.heightmapOBJ.heightScale = this.getInputData(4);
+    if (this.heightmapOBJ.heightScale === undefined)
+        this.heightmapOBJ.heightScale = 200;
 
     // Receive perturbation
     perturbation = this.getInputData(5);
@@ -111,11 +111,16 @@ PerlinNoiseNode.prototype.onExecute = function() {
         self.fboHeightmap.shader.setFloat("u_yOffset", yOffset);
     }
 
-    // --- Create heightmap and save it in the provided texture ---
-    // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
-    // Create framebuffer providing the texture and a custom shader
-    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture, "perlinNoise", setHeightmapUniformsCallback);
+    if (!this.heightmapOBJ.heightmapTexture) {
+        // --- Create heightmap and save it in the provided texture ---
+        // Create texture to be filled by the framebuffer
+        this.heightmapOBJ.heightmapTexture = new Texture(this.heightmapOBJ.size, this.heightmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboHeightmap = new FrameBuffer(this.heightmapOBJ.size, this.heightmapOBJ.size, this.heightmapOBJ.heightmapTexture, "perlinNoise", setHeightmapUniformsCallback);
+    } else {
+        this.heightmapOBJ.heightmapTexture.setHash(this.hash);
+        this.fboHeightmap.setUniformsCallback(setHeightmapUniformsCallback);
+    }
 
     this.fboHeightmap.render();
 
@@ -125,7 +130,7 @@ PerlinNoiseNode.prototype.onExecute = function() {
         this.img = this.fboHeightmap.toImage();
     }
 
-    this.setOutputData(0, this.heighmapOBJ);
+    this.setOutputData(0, this.heightmapOBJ);
 }
 
 PerlinNoiseNode.prototype.onDrawBackground = function(ctx)

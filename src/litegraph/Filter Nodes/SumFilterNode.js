@@ -97,14 +97,14 @@ SumFilterNode.prototype.onExecute = function() {
     }
 
     // Create texture to be filled by the framebuffer
-    var filterTexture = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+    var filterTexture = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
     // Create framebuffer providing the texture and a custom shader
     this.fboFilter = new FrameBuffer(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, filterTexture, "sumFilter", setFilterUniformsCallback);
 
     this.fboFilter.render();
 
     // Create texture to be filled by the framebuffer
-    var filterTextureColor = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+    var filterTextureColor = new Texture(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
     // Create framebuffer providing the texture and a custom shader
     this.fboFilterColor = new FrameBuffer(this.heightmapOBJ_0.size, this.heightmapOBJ_0.size, filterTextureColor, "sumFilter", setFilterColorUniformsCallback);
 

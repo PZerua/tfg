@@ -7,7 +7,7 @@ function CustomHeightmapNode() {
     this.addOutput("Heightmap");
 
     // The object to be exported
-    this.heighmapOBJ = {
+    this.heightmapOBJ = {
         heightmapTexture: undefined,
         normalsTexture: undefined,
         colorTexture: undefined,
@@ -32,41 +32,39 @@ CustomHeightmapNode.prototype.onExecute = function() {
     }
 
     // Receive size
-    this.heighmapOBJ.size = this.getInputData(1);
-    if (this.heighmapOBJ.size === undefined) {
-        this.heighmapOBJ.size = image.width;
+    this.heightmapOBJ.size = this.getInputData(1);
+    if (this.heightmapOBJ.size === undefined) {
+        this.heightmapOBJ.size = image.width;
     } else {
-        image.width = this.heighmapOBJ.size;
-        image.height = this.heighmapOBJ.size;
+        image.width = this.heightmapOBJ.size;
+        image.height = this.heightmapOBJ.size;
         // Resize
     }
 
     // Receive mesh height scale
-    this.heighmapOBJ.heightScale = this.getInputData(2);
-    if (this.heighmapOBJ.heightScale === undefined)
-        this.heighmapOBJ.heightScale = 200;
+    this.heightmapOBJ.heightScale = this.getInputData(2);
+    if (this.heightmapOBJ.heightScale === undefined)
+        this.heightmapOBJ.heightScale = 200;
 
-    var hash = Math.createHash([this.heighmapOBJ.size, this.heighmapOBJ.heightScale, Editor.fastEditMode ? 1 : 0]);
+    var hash = Math.createHash([this.heightmapOBJ.size, this.heightmapOBJ.heightScale, Editor.fastEditMode ? 1 : 0]);
     hash += image.src;
 
     if (this.hash && this.hash == hash) {
-        this.setOutputData(0, this.heighmapOBJ);
+        this.setOutputData(0, this.heightmapOBJ);
         return;
     } else {
         this.hash = hash;
     }
 
-    // Define custom uniforms for the framebuffer's shader
-    var self = this;
-    var setHeightmapUniformsCallback = function() {
-        self.fboHeightmap.shader.setFloat("u_frequency", self.frequency);
-        self.fboHeightmap.shader.setFloat("u_amplitude", self.amplitude);
-        self.fboHeightmap.shader.setInt("u_octaves", self.octaves);
+    if (!this.heightmapOBJ.heightmapTexture) {
+        // --- Create heightmap and save it in the provided texture ---
+        // Create texture to be filled by the framebuffer
+        this.heightmapOBJ.heightmapTexture = new Texture(this.heightmapOBJ.size, this.heightmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, image, this.hash);
+        // Create framebuffer providing the texture and a custom shader
+        this.fboHeightmap = new FrameBuffer(this.heightmapOBJ.size, this.heightmapOBJ.size, this.heightmapOBJ.heightmapTexture);
+    } else {
+        this.heightmapOBJ.heightmapTexture.setHash(this.hash);
     }
-
-    // --- Create heightmap and save it in the provided texture ---
-    // Create texture to be filled by the framebuffer
-    this.heighmapOBJ.heightmapTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image, this.hash);
 
     // Only generate preview when fast edit is disabled
     if (!Editor.fastEditMode) {

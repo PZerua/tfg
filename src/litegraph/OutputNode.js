@@ -65,7 +65,7 @@ OutputNode.prototype.onExecute = function() {
     if (!this.normalsTexture) {
         // --- Create normal map and save it in the provided texture ---
         // Create texture to be filled by the framebuffer
-        this.normalsTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        this.normalsTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
         // Create framebuffer providing the texture and a custom shader
         this.fboNormals = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.normalsTexture, "calcNormals", setNormalsUniformsCallback);
     } else {
@@ -78,7 +78,7 @@ OutputNode.prototype.onExecute = function() {
     if (!this.colorTexture) {
 
         // Create texture to be filled by the framebuffer
-        this.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null, this.hash);
+        this.colorTexture = new Texture(this.heighmapOBJ.size, this.heighmapOBJ.size, gl.RGBA32F, gl.RGBA, gl.FLOAT, null, this.hash);
         this.fboColor = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.colorTexture);
 
     } else {
@@ -86,7 +86,6 @@ OutputNode.prototype.onExecute = function() {
     }
 
     if (!this.heighmapOBJ.colorTexture) {
-
         // Create framebuffer providing the texture and a custom shader
         this.fboColor.setShader("calcColor");
         this.fboColor.setUniformsCallback(setColorUniformsCallback);
@@ -100,8 +99,12 @@ OutputNode.prototype.onExecute = function() {
     }
 
 
-    // Create framebuffer providing the texture and a custom shader
-    this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture);
+    if (!this.fboHeightmap) {
+        // Create framebuffer providing the texture and a custom shader
+        this.fboHeightmap = new FrameBuffer(this.heighmapOBJ.size, this.heighmapOBJ.size, this.heighmapOBJ.heightmapTexture);
+    } else {
+        this.fboHeightmap.setTexture(this.heighmapOBJ.heightmapTexture);
+    }
 
     if (!Editor.fastEditMode) {
         // Display heightmap texture in editor
