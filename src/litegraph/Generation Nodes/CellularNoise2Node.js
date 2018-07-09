@@ -19,18 +19,19 @@ function CellularNoise2Node() {
         heightScale: 0
     }
 
+    this.properties = {amp:1.0,freq:3.0,oct:8,hscale:200,perturb:0.0,xoffset:0.0,yoffset:0.0};
+
     this.size[1] += 128.0;
 }
 
 //name to show
 CellularNoise2Node.title = "Cellular Noise Sub";
 
-//function to call when the node is executed
-CellularNoise2Node.prototype.onExecute = function() {
-
+CellularNoise2Node.prototype.evaluateHash = function() {
     var inputsValues = [];
+    var propArray = Object.values(this.properties);
     for (var i = 0; i < this.inputs.length; i++) {
-        var input = this.getInputData(i);
+        var input = propArray[i];
 
         if (input === undefined) {
             inputsValues[i] = 0;
@@ -45,67 +46,76 @@ CellularNoise2Node.prototype.onExecute = function() {
     // Detect terrain size changes
     inputsValues.push(Editor.terrainSize);
 
-    // Force to reevaluate when changing between modes
-    inputsValues.push(Editor.fastEditMode ? 1 : 0);
-
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
         this.setOutputData(0, this.heightmapOBJ);
-        return;
+        return false;
     } else {
         this.hash = hash;
+        return true;
     }
+}
 
+CellularNoise2Node.prototype.checkProperties = function() {
     // Receive size
     this.heightmapOBJ.size = Editor.terrainSize;
-    if (this.heightmapOBJ.size === undefined)
-        this.heightmapOBJ.size = 1024;
+
+    var idx = 0;
 
     // Receive amplitude
-    amplitude = this.getInputData(0);
-    if (amplitude === undefined)
-        amplitude = 1;
-
+    this.properties.amp = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.amp;
+    idx++;
     // Receive frequency
-    frequency = this.getInputData(1);
-    if (frequency === undefined)
-        frequency = 3;
+    this.properties.freq = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.freq;
+    idx++;
 
     // Receive octaves
-    octaves = this.getInputData(2);
-    if (octaves === undefined)
-        octaves = 8;
+    this.properties.oct = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.oct;
+    idx++;
 
     // Receive mesh height scale
-    this.heightmapOBJ.heightScale = this.getInputData(3);
-    if (this.heightmapOBJ.heightScale === undefined)
-        this.heightmapOBJ.heightScale = 200;
+    this.properties.hscale = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.hscale;
+    this.heightmapOBJ.heightScale = this.properties.hscale
+    idx++;
 
     // Receive perturbation
-    perturbation = this.getInputData(4);
-    if (perturbation === undefined)
-        perturbation = 0.0;
+    this.properties.perturb = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.perturb;
+    idx++;
 
     // Receive x offset
-    xOffset = this.getInputData(5);
-    if (xOffset === undefined)
-        xOffset = 0.0;
+    this.properties.xoffset = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.xoffset;
+    idx++;
 
     // Receive y offset
-    yOffset = this.getInputData(6);
-    if (yOffset === undefined)
-        yOffset = 0.0;
+    this.properties.yoffset = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.yoffset;
+    idx++;
+}
+
+//function to call when the node is executed
+CellularNoise2Node.prototype.onExecute = function() {
+
+    this.checkProperties();
+    var hashChanged = this.evaluateHash()
+
+    if (hashChanged) {
+        Editor.setCalculateColor("#a0711a");
+    }
+
+    if (!Editor.calculatingImages && !hashChanged) {
+        this.setOutputData(0, this.lastOBJ);
+        return;
+    }
 
     // Define custom uniforms for the framebuffer's shader
     var self = this;
     var setHeightmapUniformsCallback = function() {
-        self.fboHeightmap.shader.setFloat("u_frequency", frequency);
-        self.fboHeightmap.shader.setFloat("u_amplitude", amplitude);
-        self.fboHeightmap.shader.setInt("u_octaves", octaves);
-        self.fboHeightmap.shader.setFloat("u_perturbation", perturbation);
-        self.fboHeightmap.shader.setFloat("u_xOffset", xOffset);
-        self.fboHeightmap.shader.setFloat("u_yOffset", yOffset);
+        self.fboHeightmap.shader.setFloat("u_frequency", self.properties.freq);
+        self.fboHeightmap.shader.setFloat("u_amplitude", self.properties.amp);
+        self.fboHeightmap.shader.setInt("u_octaves", self.properties.oct);
+        self.fboHeightmap.shader.setFloat("u_perturbation", self.properties.perturb);
+        self.fboHeightmap.shader.setFloat("u_xOffset", self.properties.xoffset);
+        self.fboHeightmap.shader.setFloat("u_yOffset", self.properties.yoffset);
     }
 
     if (!this.heightmapOBJ.heightmapTexture) {
@@ -121,13 +131,13 @@ CellularNoise2Node.prototype.onExecute = function() {
 
     this.fboHeightmap.render();
 
-    // Only generate preview when fast edit is disabled
-    if (!Editor.fastEditMode) {
+    if (Editor.calculatingImages) {
         // To display heightmap texture in node
         this.img = this.fboHeightmap.toImage();
     }
 
-    this.setOutputData(0, this.heighmapOBJ);
+    this.lastOBJ = Object.assign({}, this.heightmapOBJ);
+    this.setOutputData(0, this.heightmapOBJ);
 }
 
 CellularNoise2Node.prototype.onDrawBackground = function(ctx)

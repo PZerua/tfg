@@ -9,9 +9,7 @@ OutputNode.title = "Output";
 OutputNode.position = [10, 50];
 OutputNode.size = [300, 50];
 
-//function to call when the node is executed
-OutputNode.prototype.onExecute = function() {
-
+OutputNode.prototype.evaluateHash = function() {
     var inputsValues = [];
     for (var i = 0; i < this.inputs.length; i++) {
         var input = this.getInputData(i);
@@ -30,9 +28,22 @@ OutputNode.prototype.onExecute = function() {
 
     if (this.hash && this.hash == hash) {
         this.setOutputData(0, this.heighmapOBJ);
-        return;
+        //Editor.calculatingImages = false;
+        //Editor.setCalculateColor("#3F3F3F");
+        return false;
     } else {
         this.hash = hash;
+        return true;
+    }
+}
+
+//function to call when the node is executed
+OutputNode.prototype.onExecute = function() {
+
+    var hashChanged = this.evaluateHash()
+
+    if (!Editor.calculatingImages && (!hashChanged || Editor.fastEditMode)) {
+        return;
     }
 
     // Receive heightmap Obj and copy its contents (I don't want to modify it being a reference, bad things can happen)
@@ -106,7 +117,7 @@ OutputNode.prototype.onExecute = function() {
         this.fboHeightmap.setTexture(this.heighmapOBJ.heightmapTexture);
     }
 
-    if (!Editor.fastEditMode) {
+    if (Editor.calculatingImages) {
         // Display heightmap texture in editor
         var img = this.fboHeightmap.toImage();
         var htmlImg = document.getElementById("heightmapTex");
@@ -121,6 +132,9 @@ OutputNode.prototype.onExecute = function() {
         img = this.fboColor.toImage();
         htmlImg = document.getElementById("colorTex");
         htmlImg.src = img.src;
+
+        Editor.calculatingImages = false;
+        Editor.setCalculateColor("#3F3F3F");
     }
 }
 

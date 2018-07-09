@@ -9,8 +9,8 @@ var Editor = {
 	currentKeys: {},
 	stats: new Stats(),
 	graph : new LGraph(),
-	fastEditMode: false,
 	terrainSize: 1024,
+	calculatingImages: true,
 	init : function() {
 
 		// var container = document.getElementById("container")
@@ -43,10 +43,13 @@ var Editor = {
 			}
 		};
 
-		this.runStepButton = document.getElementById("runStepButton")
-		this.runStepButton.onclick = function() {
+		this.calculateButton = document.getElementById("calculateButton")
+		this.calculateButton.onclick = function() {
+			self.calculatingImages = true;
 			self.graph.runStep();
-			self.renderer.buildTerrain();
+			Editor.calculatingImages = false;
+			Editor.setCalculateColor("#3F3F3F");
+			//self.renderer.buildTerrain();
 		};
 
 		var centerCameraButton = document.getElementById("centerCameraButton")
@@ -75,32 +78,7 @@ var Editor = {
 			}
 
 			Editor.terrainSize = value;
-			self.runStepButton.click();
-		};
-
-		this.fastEditButton = document.getElementById("fastEditButton")
-		this.fastEditButton.onclick = function() {
-			if (Editor.fastEditMode) {
-				Editor.fastEditMode = false;
-				Editor.graph.stop();
-				Editor.graph.runStep();
-				self.fastEditButton.textContent  = "Fast Edit: OFF";
-
-				// Display textures
-				document.getElementById("heightmapTex").style.display = 'block';
-				document.getElementById("normalsTex").style.display = 'block';
-				document.getElementById("colorTex").style.display = 'block';
-
-			} else {
-				Editor.fastEditMode = true;
-				Editor.graph.start();
-				self.fastEditButton.textContent  = "Fast Edit: ON";
-
-				// Hide textures
-				document.getElementById("heightmapTex").style.display = 'none';
-				document.getElementById("normalsTex").style.display = 'none';
-				document.getElementById("colorTex").style.display = 'none';
-			}
+			self.calculateButton.click();
 		};
 
 		var saveButton = document.getElementById("saveButton")
@@ -113,6 +91,7 @@ var Editor = {
 		};
 
 		var loadFile = document.getElementById("loadFile")
+		var count = 0;
 		loadFile.addEventListener('change', function() {
 			var url = window.URL.createObjectURL(loadFile.files[0]);
 
@@ -136,11 +115,11 @@ var Editor = {
 				} else {
 					Editor.graph.configure(data);
 				}
+				self.calculateButton.click();
+				Editor.graph.start();
 			}
 
-			if (Editor.fastEditMode) {
-				self.fastEditButton.click();
-			}
+			loadFile.value = "";
 		});
 
 		// Get file data on drop
@@ -176,6 +155,9 @@ var Editor = {
 		var yaw = Math.acos(dir.x/Math.cos(pitch));
 
 		this.camera.setYawPitch(-Math.toDegrees(yaw), Math.toDegrees(pitch));
+	},
+	setCalculateColor: function(color) {
+		this.calculateButton.style.backgroundColor = color;
 	}
 };
 
