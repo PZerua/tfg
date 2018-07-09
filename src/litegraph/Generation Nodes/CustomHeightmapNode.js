@@ -2,7 +2,6 @@
 function CustomHeightmapNode() {
 
     this.addInput("Image", "image");
-    this.addInput("Size", "number");
     this.addInput("Height Scale", "number");
     this.addOutput("Heightmap");
 
@@ -20,33 +19,32 @@ function CustomHeightmapNode() {
 
 //name to show
 CustomHeightmapNode.title = "Custom Heightmap";
-CustomHeightmapNode.position = [10, 50];
-CustomHeightmapNode.size = [300, 50];
 
 //function to call when the node is executed
 CustomHeightmapNode.prototype.onExecute = function() {
+z
+    // Receive size
+    this.heightmapOBJ.size = Editor.terrainSize;
+    if (this.heightmapOBJ.size === undefined)
+        this.heightmapOBJ.size = 1024;
+    else {
+        // TODO: Resize image
+
+        // image.width = this.heightmapOBJ.size;
+        // image.height = this.heightmapOBJ.size;
+    }
 
     var image = this.getInputData(0);
     if (image === undefined) {
         return;
     }
 
-    // Receive size
-    this.heightmapOBJ.size = this.getInputData(1);
-    if (this.heightmapOBJ.size === undefined) {
-        this.heightmapOBJ.size = image.width;
-    } else {
-        image.width = this.heightmapOBJ.size;
-        image.height = this.heightmapOBJ.size;
-        // Resize
-    }
-
     // Receive mesh height scale
-    this.heightmapOBJ.heightScale = this.getInputData(2);
+    this.heightmapOBJ.heightScale = this.getInputData(1);
     if (this.heightmapOBJ.heightScale === undefined)
         this.heightmapOBJ.heightScale = 200;
 
-    var hash = Math.createHash([this.heightmapOBJ.size, this.heightmapOBJ.heightScale, Editor.fastEditMode ? 1 : 0]);
+    var hash = Math.createHash([this.heightmapOBJ.size, this.heightmapOBJ.heightScale, Editor.fastEditMode ? 1 : 0, Editor.terrainSize]);
     hash += image.src;
 
     if (this.hash && this.hash == hash) {

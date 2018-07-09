@@ -10,6 +10,7 @@ var Editor = {
 	stats: new Stats(),
 	graph : new LGraph(),
 	fastEditMode: false,
+	terrainSize: 1024,
 	init : function() {
 
 		// var container = document.getElementById("container")
@@ -53,6 +54,30 @@ var Editor = {
 			self.centerCamera()
 		};
 
+		// Validate terrain size input
+		this.terrainSizeInput = document.getElementById("terrainSize")
+		this.terrainSizeInput.oninput = function() {
+			if (this.value > 8192) {
+				this.value = 8192;
+			}
+			// if (this.value < 4) {
+			// 	this.value = 4;
+			// }
+		};
+
+		var submitTerrainSize = document.getElementById("submitTerrainSize")
+		submitTerrainSize.onclick = function() {
+
+			var value = Number(self.terrainSizeInput.value);
+			if (value < 128) {
+				self.terrainSizeInput.value = 128;
+				value = 128;
+			}
+
+			Editor.terrainSize = value;
+			self.runStepButton.click();
+		};
+
 		this.fastEditButton = document.getElementById("fastEditButton")
 		this.fastEditButton.onclick = function() {
 			if (Editor.fastEditMode) {
@@ -81,7 +106,7 @@ var Editor = {
 		var saveButton = document.getElementById("saveButton")
 		saveButton.onclick = function() {
 			var a = document.createElement('a');
-			var json = JSON.stringify( self.graph.serialize() );
+			var json = JSON.stringify( [self.graph.serialize(), Editor.terrainSize] );
 			a.setAttribute('href', 'data:text/plain;charset=utf-u,' + encodeURIComponent(json));
 			a.setAttribute('download', "Workflow.json");
 			a.click()
@@ -90,7 +115,29 @@ var Editor = {
 		var loadFile = document.getElementById("loadFile")
 		loadFile.addEventListener('change', function() {
 			var url = window.URL.createObjectURL(loadFile.files[0]);
-			self.graph.load(url);
+
+			var req = new XMLHttpRequest();
+			req.open('GET', url, true);
+			req.send(null);
+			req.onload = function (oEvent) {
+				if(req.status !== 200)
+				{
+					console.error("Error loading graph:", req.status,req.response);
+					return;
+				}
+				var data = JSON.parse( req.response );
+
+				// TODO: remove this backwards compatibility check
+				if (data.constructor === Array) {
+					Editor.graph.configure(data[0]);
+					var size = data[1]
+					self.terrainSizeInput.value = data[1];
+					self.terrainSize = data[1];
+				} else {
+					Editor.graph.configure(data);
+				}
+			}
+
 			if (Editor.fastEditMode) {
 				self.fastEditButton.click();
 			}

@@ -1,7 +1,6 @@
 //node constructor class
 function PerlinNoiseNode() {
 
-    this.addInput("Size", "number");
     this.addInput("Amplitude", "number");
     this.addInput("Frequency", "number");
     this.addInput("Octaves", "number");
@@ -43,6 +42,9 @@ PerlinNoiseNode.prototype.onExecute = function() {
         }
     }
 
+    // Detect terrain size changes
+    inputsValues.push(Editor.terrainSize);
+
     // Force to reevaluate when changing between modes
     inputsValues.push(Editor.fastEditMode ? 1 : 0);
 
@@ -61,42 +63,42 @@ PerlinNoiseNode.prototype.onExecute = function() {
     }
 
     // Receive size
-    this.heightmapOBJ.size = this.getInputData(0);
+    this.heightmapOBJ.size = Editor.terrainSize;
     if (this.heightmapOBJ.size === undefined)
         this.heightmapOBJ.size = 1024;
 
     // Receive amplitude
-    var amplitude = this.getInputData(1);
+    amplitude = this.getInputData(0);
     if (amplitude === undefined)
         amplitude = 1;
 
     // Receive frequency
-    frequency = this.getInputData(2);
+    frequency = this.getInputData(1);
     if (frequency === undefined)
         frequency = 3;
 
     // Receive octaves
-    octaves = this.getInputData(3);
+    octaves = this.getInputData(2);
     if (octaves === undefined)
         octaves = 8;
 
     // Receive mesh height scale
-    this.heightmapOBJ.heightScale = this.getInputData(4);
+    this.heightmapOBJ.heightScale = this.getInputData(3);
     if (this.heightmapOBJ.heightScale === undefined)
         this.heightmapOBJ.heightScale = 200;
 
     // Receive perturbation
-    perturbation = this.getInputData(5);
+    perturbation = this.getInputData(4);
     if (perturbation === undefined)
         perturbation = 0.0;
 
     // Receive x offset
-    xOffset = this.getInputData(6);
+    xOffset = this.getInputData(5);
     if (xOffset === undefined)
         xOffset = 0.0;
 
     // Receive y offset
-    yOffset = this.getInputData(7);
+    yOffset = this.getInputData(6);
     if (yOffset === undefined)
         yOffset = 0.0;
 
