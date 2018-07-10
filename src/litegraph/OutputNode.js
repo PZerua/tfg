@@ -27,9 +27,6 @@ OutputNode.prototype.evaluateHash = function() {
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
-        this.setOutputData(0, this.heighmapOBJ);
-        //Editor.calculatingImages = false;
-        //Editor.setCalculateColor("#3F3F3F");
         return false;
     } else {
         this.hash = hash;

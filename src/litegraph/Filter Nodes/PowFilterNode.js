@@ -63,7 +63,6 @@ PowFilterNode.prototype.checkProperties = function() {
 
     var idx = 1;
 
-    // Receive amplitude
     this.properties.exponent = this.getInputData(idx) !== undefined ? this.getInputData(idx) : this.properties.exponent;
     idx++;
 

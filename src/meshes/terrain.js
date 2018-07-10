@@ -9,7 +9,8 @@ function Terrain(scale) {
     this.vboBarycentric;
     this.ebo;
     this.showWireframe = 0;
-
+    this.firstSetup = true;
+    
     var self = this;
 
     this.buildTerrain = function() {
@@ -125,6 +126,11 @@ function Terrain(scale) {
 
         self.size = heightmapOBJ.size;
         self.buildTerrain();
+
+        if (this.firstSetup) {
+            Editor.centerCamera();
+            this.firstSetup = false;
+        }
 
         // -- Setup buffers --
         self.vao = new VertexArray();

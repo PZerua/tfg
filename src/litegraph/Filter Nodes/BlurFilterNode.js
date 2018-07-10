@@ -35,7 +35,6 @@ BlurFilterNode.prototype.evaluateHash = function() {
     var hash = Math.createHash(inputsValues);
 
     if (this.hash && this.hash == hash) {
-        this.setOutputData(0, this.heighmapOBJ);
         return false;
     } else {
         this.hash = hash;
@@ -74,6 +73,7 @@ BlurFilterNode.prototype.checkProperties = function() {
 BlurFilterNode.prototype.onExecute = function() {
 
     if(!this.checkProperties()) {
+        this.setOutputData(0, this.lastOBJ);
         return;
     }
     var hashChanged = this.evaluateHash()
@@ -83,7 +83,7 @@ BlurFilterNode.prototype.onExecute = function() {
     }
 
     if (!Editor.calculatingImages && !hashChanged) {
-        //this.setOutputData(0, this.heightmapOBJ);
+        this.setOutputData(0, this.lastOBJ);
         return;
     }
 
@@ -118,6 +118,7 @@ BlurFilterNode.prototype.onExecute = function() {
         this.img = this.fboFilter.toImage();
     }
 
+    this.lastOBJ = Object.assign({}, this.heightmapOBJ);
     this.setOutputData(0, this.heightmapOBJ);
 }
 

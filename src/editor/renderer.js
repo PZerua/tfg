@@ -89,8 +89,6 @@ Renderer.prototype.render = function(camera) {
 
 	this.terrain.setupTerrain();
 
-	Editor.centerCamera();
-
 	gl.viewport(0, 0, Editor.glCanvas.width, Editor.glCanvas.height);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
