@@ -24,7 +24,7 @@ var Editor = {
 		window.addEventListener("resize", function() { Editor.graphCanvas.resize(); } );
 
 		// Setup litegraph default nodes
-		this.graph.load("data/SampleWorkflow.json");
+		//this.graph.load("data/SampleWorkflow.json");
 
 		// Setup renderer and camera
 		this.renderer = new Renderer(this.glCanvas);
@@ -67,6 +67,59 @@ var Editor = {
 			// 	this.value = 4;
 			// }
 		};
+
+		this.demoSelector = document.getElementById("selector")
+		this.demoSelector.onchange = function(e) {
+			var option = this.options[this.selectedIndex];
+			var url = option.dataset["url"];
+
+			if(url) {
+				var req = new XMLHttpRequest();
+				req.open('GET', url, true);
+				req.send(null);
+				req.onload = function (oEvent) {
+					if(req.status !== 200)
+					{
+						console.error("Error loading graph:", req.status,req.response);
+						return;
+					}
+					var data = JSON.parse( req.response );
+
+					// TODO: remove this backwards compatibility check
+					if (data.constructor === Array) {
+						Editor.graph.configure(data[0]);
+						var size = data[1]
+						self.terrainSizeInput.value = data[1];
+						self.terrainSize = data[1];
+					} else {
+						Editor.graph.configure(data);
+					}
+					self.calculateButton.click();
+					Editor.graph.start();
+				}
+			}
+			else {
+				self.graph.clear();
+			}
+		};
+
+		function addDemo( name, url, selected )
+		{
+			var option = document.createElement("option");
+			if (selected) {
+				option.setAttribute('selected', 'selected');
+			}
+			option.value = name;
+			option.dataset["url"] = url;
+			option.innerHTML = name;
+			self.demoSelector.appendChild( option );
+		}
+
+		//some examples
+		addDemo("Simple Terrain", "data/Simple Terrain.json", true);
+		addDemo("Mountains", "data/Mountains.json");
+
+		this.demoSelector.onchange();
 
 		var submitTerrainSize = document.getElementById("submitTerrainSize")
 		submitTerrainSize.onclick = function() {

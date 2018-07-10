@@ -10,7 +10,7 @@ function Terrain(scale) {
     this.ebo;
     this.showWireframe = 0;
     this.firstSetup = true;
-    
+
     var self = this;
 
     this.buildTerrain = function() {
@@ -106,7 +106,7 @@ function Terrain(scale) {
         if (outputNode) {
             var heightmapOBJ = outputNode.heighmapOBJ;
         } else {
-            console.error("No Output node in graph");
+            //console.error("No Output node in graph");
             return false;
         }
 

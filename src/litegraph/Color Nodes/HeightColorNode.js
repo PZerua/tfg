@@ -48,8 +48,8 @@ HeightColorNode.prototype.evaluateHash = function() {
 }
 
 HeightColorNode.prototype.onConnectionsChange = function() {
-    if (this.heightmapOBJ) {
-        this.setOutputData(0, this.heightmapOBJ);
+    if (this.lastOBJ) {
+        this.setOutputData(0, this.lastOBJ);
     }
 }
 
